@@ -13,3 +13,5 @@ Below you will find a documentation for every single available plugin provided b
 Please ensure that you will escape the `@` if you are configuring it on the Icinga side. To do so, you will simply have to write an *\`* before the `@` symbol: \``@`
 
 To test thresholds with different input values, you can use the Framework Cmdlet `Get-IcingaHelpThresholds`.
+
+* [Invoke-IcingaCheckHyperVHealth](plugins/01-Invoke-IcingaCheckHyperVHealth.md)
