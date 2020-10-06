@@ -12,4 +12,6 @@ Released closed milestones can be found on [GitHub](https://github.com/Icinga/ic
 
 ### New Plugins
 
-Coming soon.
+This release adds the following new plugins:
+
+* [Invoke-IcingaCheckHyperVHealth](https://icinga.com/docs/windows/latest/hyperv/doc/plugins/01-Invoke-IcingaChecHyperVHealth/): Allows you to monitor Windows Hyper-V health with Icinga, i.e it checks the availability and state of the Hyper-V server.
