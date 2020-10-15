@@ -19,7 +19,7 @@ function Get-IcingaHypervHostInfo()
     [hashtable]$HypervDetails = @{ };
 
     if ((Test-IcingaHyperVInstalled) -eq $FALSE) {
-        Exit-IcingaThrowException -ExceptionType 'Custom' -CustomMessage 'Package Finder' -InputString 'The Hyper-V feature is not installed on this system.' -Force;
+        Exit-IcingaThrowException -ExceptionType 'Custom' -CustomMessage 'Hyper-V not installed' -InputString 'The Hyper-V feature is not installed on this system.' -Force;
     }
 
     $HypervHosts = Get-IcingaWindowsInformation -ClassName Msvm_VirtualSystemManagementService -Namespace 'root\Virtualization\v2';
