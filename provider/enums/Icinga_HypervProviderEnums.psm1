@@ -30,10 +30,45 @@
     'Starting'            = 10;
 }
 
+<########################################################################################################
+################################# /lib/provider/vmhealth ################################################
+################################################################################################endregion#>
+
+[hashtable]$VMHeartbeat = @{
+    2  = 'OK';
+    6  = 'Error';
+    12 = 'No Contact';
+    13 = 'Lost Communication';
+};
+
+[hashtable]$VMHeartbeatName = @{
+    'OK'                 = 2;
+    'Error'              = 6;
+    'No Contact'         = 12;
+    'Lost Communication' = 13;
+};
+
+[hashtable]$VMHealthState = @{
+    5  = 'OK';
+    20 = 'Major Failure';
+    25 = 'Critical failure';
+};
+
+[hashtable]$VMHealthStateName = @{
+    'OK'               = 5;
+    'Major Failure'    = 20;
+    'Critical failure' = 25;
+};
+
 [hashtable]$HypervProviderEnums = @{
     # /lib/provider/vcomputer
-    VMEnabledState            = $VMEnabledState;
-    VMEnabledStateName        = $VMEnabledStateName;
+    VMEnabledState          = $VMEnabledState;
+    VMEnabledStateName      = $VMEnabledStateName;
+    # /lib/provider/vmhealth
+    VMHeartbeat             = $VMHeartbeat;
+    VMHeartbeatName         = $VMHeartbeatName;
+    VMHealthState           = $VMHealthState;
+    VMHealthStateName       = $VMHealthStateName;
 };
 
 Export-ModuleMember -Variable @('HypervProviderEnums');

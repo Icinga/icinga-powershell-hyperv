@@ -50,9 +50,13 @@ function Get-IcingaVirtualComputerInfo() {
     # Gather all infos rgarding Virtual Computer CPU used
     $CountCPUCores      = Get-IcingaCPUCount;
     $VComputerRamLimit  = 0;
-    $StorageOverCommit  = 0;
     $VComputerData      = @{
         'VMs'       = @{ };
+        'Summary'   = @{
+            'RunningVms' = 0;
+            'StoppedVms' = 0;
+            'TotalVms'   = 0;
+        };
         'Resources' = @{
             'RAMOverCommit'     = @{
                 'Bytes'   = 0;
@@ -268,7 +272,7 @@ function Get-IcingaVirtualComputerInfo() {
         }
 
         # Calculate Hyper-V-Server overcommitment RAM, overcommitment CPU and overcommitment memory
-        if ($vcomputer.EnabledState -eq $HypervProviderEnums.VMEnabledStateName.Enabled) {
+        if ($vcomputer.EnabledState -ne $HypervProviderEnums.VMEnabledStateName.Disabled) {
             # Calculation for RAM Overcommitment
             foreach ($memory in $VComputerMemorys) {
                 [string]$InstanceId = $memory.InstanceID;
@@ -307,9 +311,15 @@ function Get-IcingaVirtualComputerInfo() {
                 # Gather informations about the virtual computers hard disk drive
                 $VComputerData.Resources.StorageOverCommit[$details.Partition].Bytes += ($vhd.BlockSize * $vhd.NumberOfBlocks);
             }
+
+            # we count up here to get the total number of vms that are still running
+            $VComputerData.Summary.RunningVms++;
+        } else {
+            # we count up here to get the number of total vms that have not yet started
+            $VComputerData.Summary.StoppedVms++;
         }
 
-        if ($ActiveVms -And $vcomputer.EnabledState -ne $HypervProviderEnums.VMEnabledStateName.Enabled) {
+        if ($ActiveVms -And $vcomputer.EnabledState -eq $HypervProviderEnums.VMEnabledStateName.Disabled) {
             continue;
         }
 
@@ -380,6 +390,8 @@ function Get-IcingaVirtualComputerInfo() {
         $VComputerData.Resources.CPUOverCommit.Percent = ([System.Math]::Round((($VComputerData.Resources.CPUOverCommit.Cores / $CountCPUCores) * 100) - 100, 2));
     }
 
+    # Here we calculate how many Vms the Hyper-V server has in total
+    $VComputerData.Summary.TotalVms = ($VComputerData.Summary.RunningVms + $VComputerData.Summary.StoppedVms);
     # Calculate the average Hyper-V RAM Overcommitment
     $VComputerData.Resources.RAMOverCommit.Percent     = ([System.Math]::Round((($VComputerData.Resources.RAMOverCommit.Bytes / $VComputerRamLimit) * 100) - 100, 2));
 
