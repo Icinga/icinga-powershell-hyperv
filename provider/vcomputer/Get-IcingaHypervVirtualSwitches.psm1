@@ -79,7 +79,7 @@ function Get-IcingaHypervVirtualSwitches()
                 if ($external.PermanentAddress -ne $internal.PermanentAddress) {
                     continue;
                 }
-                
+
                 # We add some external switch specific information
                 $details += @{
                     'Interface'            = $external.Name;
@@ -91,7 +91,7 @@ function Get-IcingaHypervVirtualSwitches()
                 if ($details.ContainsKey('SwitchType') -eq $FALSE) {
                     $details.Add('SwitchType', 'External');
                 }
-    
+
                 # If the loop has not yet been skipped or interrupted, it can now be cancelled,
                 # because we have all the information we need
                 break;

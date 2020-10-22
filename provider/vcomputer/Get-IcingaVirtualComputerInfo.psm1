@@ -49,7 +49,9 @@ function Get-IcingaVirtualComputerInfo() {
     $VmPartitionsPath   = Get-IcingaWindowsInformation -ClassName Msvm_StorageAllocationSettingData -Namespace 'Root\Virtualization\v2'
     # Gather all infos rgarding Virtual Computer CPU used
     $CountCPUCores      = Get-IcingaCPUCount;
-    $VComputerRamLimit  = 0;
+    $VComputerRamLimit  = (Get-IcingaMemoryPerformanceCounter).'Memory Total Bytes';
+    $PluginInstalled    = $FALSE;
+    $CurrentVmsUsage    = 0;
     $VComputerData      = @{
         'VMs'       = @{ };
         'Summary'   = @{
@@ -59,12 +61,14 @@ function Get-IcingaVirtualComputerInfo() {
         };
         'Resources' = @{
             'RAMOverCommit'     = @{
-                'Bytes'   = 0;
-                'Percent' = 0;
+                'Bytes'    = 0;
+                'Percent'  = 0;
+                'Capacity' = $VComputerRamLimit;
             };
             'CPUOverCommit'     = @{
-                'Percent' = 0;
-                'Cores'   = 0;
+                'Percent'   = 0;
+                'Cores'     = 0;
+                'Available' = $CountCPUCores;
             };
             'StorageOverCommit' = @{ };
         };
@@ -73,6 +77,10 @@ function Get-IcingaVirtualComputerInfo() {
     # In case of a Permissions Problem or if for some reason no DATA is retrieved from the WMI classes, we throw an exception
     if ($null -eq $VirtualComputers -or $null -eq $VComputerMemorys -or $null -eq $VcomputerVHDs) {
         Exit-IcingaThrowException -Force -ExceptionType 'Permission' -ExceptionThrown 'The user you are running this command with does not have permissions to access Hyper-V data on this host. Please add the user to the "Hyper-V Administrator" user group and restart the Icinga/PowerShell service afterwards' -CustomMessage 'Hyper-V access denied';
+    }
+
+    if (Test-IcingaFunction 'Get-IcingaClusterSharedVolumeData') {
+        $PluginInstalled = $TRUE;
     }
 
     foreach ($vcomputer in $VirtualComputers) {
@@ -209,11 +217,11 @@ function Get-IcingaVirtualComputerInfo() {
                 'Path'                                 = ([string]::Format('{0}{1}{2}', $snapshot.ConfigurationDataRoot, '\', $snapshot.ConfigurationFile));
             };
 
-            $SnapshotSize = Get-ChildItem $SnapshotContent.Path | Select-Object Length;
+            $SnapshotSize = Get-ChildItem -Path $SnapshotContent.Path | Select-Object Length;
             $SnapshotContent.Add('Size', $SnapshotSize.Length);
 
             if ($details.Snapshots.Info.ContainsKey($SnapshotPart) -eq $FALSE) {
-                $details.Snapshots.Info.Add($SnapshotPart,  @{
+                $details.Snapshots.Info.Add($SnapshotPart, @{
                         'TotalUsed' = $SnapshotSize.Length;
                     }
                 );
@@ -232,7 +240,7 @@ function Get-IcingaVirtualComputerInfo() {
         }
 
         # Sort our Snapshots based on the creation Time
-        $details.Snapshots.List = $details.Snapshots.List | Sort-Object -Property @{Expression = {[datetime]$_.CreationTime}; Descending = $TRUE};
+        $details.Snapshots.List = $details.Snapshots.List | Sort-Object -Property @{Expression = { [datetime]$_.CreationTime }; Descending = $TRUE };
 
         # We are going to loop through all available vm partitions
         foreach ($vmPartition in $VmPartitionsPath) {
@@ -256,14 +264,16 @@ function Get-IcingaVirtualComputerInfo() {
                 'AutomaticDeallocation' = $vmPartition.AutomaticDeallocation;
                 'HostResource'          = $vmPartition.HostResource;
                 'Partition'             = $vmPath;
+                'CurrentUsage'          = (Get-ChildItem -Path ([string]$vmPartition.HostResource) | Select-Object Length).Length;
             };
 
             # If the partition doesn't exist in StorageOverCommit hashtable then add ones
             if ($VComputerData.Resources.StorageOverCommit.ContainsKey($vmPath) -eq $FALSE) {
                 $VComputerData.Resources.StorageOverCommit += @{
                     $vmPath = @{
-                        'Bytes'   = 0;
-                        'Percent' = 0;
+                        'Bytes'    = 0;
+                        'Percent'  = 0;
+                        'Capacity' = 0;
                     }
                 };
             }
@@ -286,11 +296,9 @@ function Get-IcingaVirtualComputerInfo() {
 
                 if ($memory.DynamicMemoryEnabled) {
                     $VComputerData.Resources.RAMOverCommit.Bytes += $memory.Limit;
-                    $VComputerRamLimit                           += $memory.Limit;
                     $details.Add('MemoryCapacity', $memory.Limit);
                 } else {
                     $VComputerData.Resources.RAMOverCommit.Bytes += $memory.VirtualQuantity;
-                    $VComputerRamLimit                           += $memory.VirtualQuantity;
                     $details.Add('MemoryCapacity', $memory.VirtualQuantity);
                 }
             }
@@ -308,10 +316,17 @@ function Get-IcingaVirtualComputerInfo() {
                     $details.Add('DiskCapacity', ($vhd.BlockSize * $vhd.NumberOfBlocks));
                 }
 
+                [string]$DeviceID = $vhd.DeviceId;
+                $DeviceID         = $DeviceID.Split(':')[1].Split('\')[0];
+                if ($details.ContainsKey('DeviceID') -eq $FALSE) {
+                    $details.Add('DeviceID', $DeviceID);
+                }
+
                 # Gather informations about the virtual computers hard disk drive
-                $VComputerData.Resources.StorageOverCommit[$details.Partition].Bytes += ($vhd.BlockSize * $vhd.NumberOfBlocks);
+                $VComputerData.Resources.StorageOverCommit[$details.Partition].Bytes += ($details.DiskCapacity);
             }
 
+            $CurrentVmsUsage += $details.CurrentUsage;
             # we count up here to get the total number of vms that are still running
             $VComputerData.Summary.RunningVms++;
         } else {
@@ -353,34 +368,75 @@ function Get-IcingaVirtualComputerInfo() {
             }
         }
 
+        foreach ($VchardDisk in $VComputerHardDisks.Keys) {
+            $OvercommitCalculated = $FALSE;
+            $PhysicalDisk         = $VComputerHardDisks[$VchardDisk];
+            if ($PhysicalDisk.DriveReference.ContainsKey($details.Partition) -eq $FALSE) {
+                continue;
+            }
+
+            [string]$PartitionId = $PhysicalDisk.DriveReference[$details.Partition];
+
+            # Gather informations about the virtual computers hard disk drive
+            $PartitionSize = $PhysicalDisk.PartitionLayout[$PartitionId].Size;
+
+            if ($CurrentVmsUsage -gt $PartitionSize) {
+                if ($PluginInstalled -eq $FALSE) {
+                    if ($VComputerData.Summary.ContainsKey('Located') -eq $FALSE) {
+                        $VComputerData.Summary.Add('Located', 'ClusterStorage');
+                    }
+                } else {
+                    $ClusterSharedVolume = Get-IcingaClusterSharedVolumeData;
+                    foreach ($volume in $ClusterSharedVolume.Keys) {
+                        $SharedVolume     = $ClusterSharedVolume[$volume];
+                        [string]$VolumeId = $SharedVolume.SharedVolumeInfo.FriendlyVolumeName;
+                        $VolumeId         = $VolumeId.Split('\')[0];
+
+                        if ($VolumeId -ne $details.Partition) {
+                            continue;
+                        }
+
+                        # Calculation of the average Storage overcommitment
+                        $ConvertToPercent = ([System.Math]::Round(
+                                (
+                                    ($VComputerData.Resources.StorageOverCommit[$details.Partition].Bytes / $SharedVolume.SharedVolumeInfo.Partition.Size) * 100
+                                ) - 100, 2
+                            )
+                        );
+
+                        if ($ConvertToPercent -le 0) {
+                            $ConvertToPercent = 0;
+                        }
+
+                        $VComputerData.Resources.StorageOverCommit[$details.Partition].Percent  = $ConvertToPercent;
+                        $VComputerData.Resources.StorageOverCommit[$details.Partition].Capacity = $SharedVolume.SharedVolumeInfo.Partition.Size;
+
+                        $OvercommitCalculated = $TRUE;
+                        break;
+                    }
+                }
+            }
+
+            if ($OvercommitCalculated -eq $FALSE) {
+                # Calculation of the average Storage overcommitment
+                $ConvertToPercent = ([System.Math]::Round((($VComputerData.Resources.StorageOverCommit[$details.Partition].Bytes / $PartitionSize) * 100) - 100, 2));
+
+                if ($ConvertToPercent -le 0) {
+                    $ConvertToPercent = 0;
+                }
+
+                $VComputerData.Resources.StorageOverCommit[$details.Partition].Percent  = $ConvertToPercent;
+                $VComputerData.Resources.StorageOverCommit[$details.Partition].Capacity = $PartitionSize;
+            }
+
+            break;
+        }
+
         $VComputerData.VMs.Add($vcomputer.ElementName, $details);
     }
 
     if ($VComputerData.VMs.Count -eq 0) {
         return;
-    }
-
-    foreach ($VchardDisk in $VComputerHardDisks.Keys) {
-        $PhysicalDisk = $VComputerHardDisks[$VchardDisk];
-        foreach ($StorageDisk in $VComputerData.Resources.StorageOverCommit.Keys) {
-            if ($PhysicalDisk.DriveReference.ContainsKey($StorageDisk) -eq $FALSE) {
-                continue;
-            }
-
-            [string]$PartitionId = $PhysicalDisk.DriveReference[$StorageDisk];
-
-            # Gather informations about the virtual computers hard disk drive
-            $PartitionSize = $PhysicalDisk.PartitionLayout[$PartitionId].Size;
-
-            # Calculation of the average Storage overcommitment
-            $ConvertToPercent = ([System.Math]::Round((($VComputerData.Resources.StorageOverCommit[$StorageDisk].Bytes / $PartitionSize) * 100) - 100, 2));
-
-            if ($ConvertToPercent -le 0) {
-                $ConvertToPercent = 0;
-            }
-
-            $VComputerData.Resources.StorageOverCommit[$StorageDisk].Percent = $ConvertToPercent;
-        }
     }
 
     # Calculate the average of Hyper-v CPU Cores used by the vms
@@ -393,7 +449,13 @@ function Get-IcingaVirtualComputerInfo() {
     # Here we calculate how many Vms the Hyper-V server has in total
     $VComputerData.Summary.TotalVms = ($VComputerData.Summary.RunningVms + $VComputerData.Summary.StoppedVms);
     # Calculate the average Hyper-V RAM Overcommitment
-    $VComputerData.Resources.RAMOverCommit.Percent     = ([System.Math]::Round((($VComputerData.Resources.RAMOverCommit.Bytes / $VComputerRamLimit) * 100) - 100, 2));
+    $RAMUsedPercent = ([System.Math]::Round((($VComputerData.Resources.RAMOverCommit.Bytes / $VComputerRamLimit) * 100) - 100, 2));
+    if ($RAMUsedPercent -le 0) {
+        $RAMUsedPercent = 0;
+    }
+
+    $VComputerData.Resources.RAMOverCommit.Percent  = $RAMUsedPercent;
+    $VComputerData.Resources.RAMOverCommit.Capacity = $VComputerRamLimit;
 
     return $VComputerData;
 }
