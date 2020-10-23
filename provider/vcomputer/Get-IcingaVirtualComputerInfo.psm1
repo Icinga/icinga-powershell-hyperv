@@ -46,7 +46,7 @@ function Get-IcingaVirtualComputerInfo() {
     $VcomputerVHDs      = Get-IcingaWindowsInformation -ClassName Msvm_LogicalDisk -Namespace 'Root\Virtualization\v2';
     $VComputerHardDisks = Get-IcingaPhysicalDiskInfo;
     # Get the Partition where all virtual Computers are Stored
-    $VmPartitionsPath   = Get-IcingaWindowsInformation -ClassName Msvm_StorageAllocationSettingData -Namespace 'Root\Virtualization\v2'
+    $VmPartitionsPath   = Get-IcingaWindowsInformation -ClassName Msvm_StorageAllocationSettingData -Namespace 'Root\Virtualization\v2';
     # Gather all infos rgarding Virtual Computer CPU used
     $CountCPUCores      = Get-IcingaCPUCount;
     $VComputerRamLimit  = (Get-IcingaMemoryPerformanceCounter).'Memory Total Bytes';
@@ -237,6 +237,22 @@ function Get-IcingaVirtualComputerInfo() {
             $LatestSnapshot = $snapshot;
             # Here we only add snapshots that are no longer current
             $details.Snapshots.List += $SnapshotContent;
+
+            foreach ($disk in $VComputerHardDisks.Keys) {
+                $PhysicalDisk = $VComputerHardDisks[$disk];
+                if ($PhysicalDisk.DriveReference.ContainsKey($SnapshotPart) -eq $FALSE) {
+                    continue;
+                }
+
+                [string]$DiskId = $PhysicalDisk.DriveReference[$SnapshotPart];
+                $FreeSpace      = $PhysicalDisk.PartitionLayout[$DiskId].FreeSpace;
+
+                if ($details.Snapshots.Info[$SnapshotPart].ContainsKey('FreeSpace') -eq $FALSE) {
+                    $details.Snapshots.Info[$SnapshotPart].Add('FreeSpace', $FreeSpace);
+                }
+
+                break;
+            }
         }
 
         # Sort our Snapshots based on the creation Time
@@ -437,6 +453,41 @@ function Get-IcingaVirtualComputerInfo() {
 
     if ($VComputerData.VMs.Count -eq 0) {
         return;
+    }
+
+    foreach ($vm in $VComputerData.VMs.Keys) {
+        $virtualmachine = $VComputerData.VMs[$vm];
+        if ($virtualmachine.Snapshots.Info.Count -eq 0) {
+            continue;
+        }
+
+        foreach ($partition in $virtualmachine.Snapshots.Info.Keys) {
+            $SnapshotPartition = $virtualmachine.Snapshots.Info[$partition];
+            if ($SnapshotPartition.TotalUsed -lt $SnapshotPartition.FreeSpace) {
+                continue;
+            }
+
+            if ($PluginInstalled -eq $FALSE) {
+                if ($VComputerData.Summary.ContainsKey('SnapshotLocated') -eq $FALSE) {
+                    $VComputerData.Summary.Add('SnapshotLocated', 'ClusterStorage');
+                }
+            } else {
+                $ClusterSharedVolume = Get-IcingaClusterSharedVolumeData;
+                foreach ($volume in $ClusterSharedVolume.Keys) {
+                    $SharedVolume     = $ClusterSharedVolume[$volume];
+                    [string]$VolumeId = $SharedVolume.SharedVolumeInfo.FriendlyVolumeName;
+                    $VolumeId         = $VolumeId.Split('\')[0];
+
+                    if ($partition -ne $VolumeId) {
+                        continue;
+                    }
+
+                    $VComputerData.VMs[$vm].Snapshots.Info[$partition].FreeSpace = $SharedVolume.SharedVolumeInfo.Partition.FreeSpace;
+
+                    break;
+                }
+            }
+        }
     }
 
     # Calculate the average of Hyper-v CPU Cores used by the vms
