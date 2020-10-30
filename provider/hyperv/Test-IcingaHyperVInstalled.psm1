@@ -17,5 +17,11 @@ function Test-IcingaHyperVInstalled()
         return $TRUE;
     }
 
+    if (Test-IcingaFunction 'Get-WindowsFeature') {
+        if ((Get-WindowsFeature -Name Hyper-V).Installed) {
+            return $TRUE;
+        }
+    }
+
     return $FALSE;
 }
