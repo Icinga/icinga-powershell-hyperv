@@ -17,6 +17,10 @@ To execute this plugin you will require to grant the following user permissions.
 * Root\Virtualization\v2
 * Root\Cimv2
 
+### Required User Groups
+
+* Hyper-V Administrator
+
 ## Arguments
 
 | Argument | Type | Required | Default | Description |
