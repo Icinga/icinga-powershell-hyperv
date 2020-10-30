@@ -9,6 +9,10 @@
 
     * Root\Virtualization\v2
     * Root\Cimv2
+
+    ### Required User Groups
+
+    * Hyper-V Administrator
 .PARAMETER NoPerfData
     Disables the performance data output of this plugin
 .PARAMETER Verbosity
