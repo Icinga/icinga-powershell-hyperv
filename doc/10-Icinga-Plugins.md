@@ -18,3 +18,4 @@ To test thresholds with different input values, you can use the Framework Cmdlet
 * [Invoke-IcingaCheckHyperVVMHealth](plugins/02-Invoke-IcingaCheckHyperVVMHealth.md)
 * [Invoke-IcingaCheckHyperVVirtualSwitches](plugins/03-Invoke-IcingaCheckHyperVVirtualSwitches.md)
 * [Invoke-IcingaCheckHyperVOverCommitment](plugins/04-Invoke-IcingaCheckHyperVOverCommitment.md)
+* [Invoke-IcingaCheckHyperVSnapshot](plugins/05-Invoke-IcingaCheckHyperVSnapshot.md)
