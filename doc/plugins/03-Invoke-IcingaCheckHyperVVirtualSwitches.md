@@ -28,12 +28,12 @@ To execute this plugin you will require to grant the following user permissions.
 
 | Argument | Type | Required | Default | Description |
 | ---      | ---  | ---      | ---     | ---         |
-| IncludeSwitches | Array | false | @() | With this parameter you can filter virtual switches for the check in. e.g. testswitch1, testswitch1. |
-| ExcludeSwitches | Array | false | @() | With this parameter you can filter out virtual switches for the check. e.g. testswitch1, testswitch1. |
-| InternalSwitches | SwitchParameter | false | False | Only the internal virtual switches are added to the check. |
-| ExternalSwitches | SwitchParameter | false | False | Only the external virtual switches are added to the check. |
-| SwitchStatusWarning | Object | false |  | Warning threshold for Switch Status indicates that an element is functioning properly, but is predicating a failure. |
-| SwitchStatusCritical | Object | false |  | Critical threshold for Switch Status indicates that an element is functioning properly, but is predicating a failure. |
+| Include | Array | false | @() | With this parameter you can filter virtual switches for the check in. e.g. testswitch1, testswitch1. |
+| Exclude | Array | false | @() | With this parameter you can filter out virtual switches for the check. e.g. testswitch1, testswitch1. |
+| Internal | SwitchParameter | false | False | Only the internal virtual switches are added to the check. |
+| External | SwitchParameter | false | False | Only the external virtual switches are added to the check. |
+| Warning | Array | false | @() | Warning threshold for Switch Status indicates that an element is functioning properly, but is predicating a failure. |
+| Critical | Array | false | @() | Critical threshold for Switch Status indicates that an element is functioning properly, but is predicating a failure. |
 | NoPerfData | SwitchParameter | false | False | Disables the performance data output of this plugin |
 | Verbosity | Object | false | 0 | Changes the behavior of the plugin output which check states are printed: 0 (default): Only service checks/packages with state not OK will be printed 1: Only services with not OK will be printed including OK checks of affected check packages including Package config 2: Everything will be printed regardless of the check state |
 

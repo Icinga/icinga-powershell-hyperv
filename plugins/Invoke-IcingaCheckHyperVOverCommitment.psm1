@@ -28,29 +28,29 @@
     Exclude virtual machines with a specific name. Supports wildcard usage (*)
 .PARAMETER ActiveVms
     Include only virtual machines that are currently running
-.PARAMETER CPUCoreOvercommitWarning
+.PARAMETER CPUCoreOCWarn
     Warning threshold for Hyper-V CPU Cores overcommitment.
-.PARAMETER CPUCoreOvercommitCritical
+.PARAMETER CPUCoreOCCrit
     Critical threshold for Hyper-V CPU Cores overcommitment.
-.PARAMETER CPUOvercommitPercentWarning
+.PARAMETER CPUOCPercentWarn
     Warning threshold for Hyper-V average CPU overcommitment.
-.PARAMETER CPUOvercommitPercentCritical
+.PARAMETER CPUOCPercentCrit
     Critical threshold for Hyper-V average CPU overcommitment.
-.PARAMETER RAMOvercommitByteWarning
+.PARAMETER RAMOCByteWarn
     Used to specify a WARNING threshold for the Hyper-V RAM overcommitment in Byte.
-.PARAMETER RAMOvercommitByteCritical
+.PARAMETER RAMOCByteCrit
     Used to specify a CRITICAL threshold for the Hyper-V RAM overcommitment in Byte.
-.PARAMETER RAMOvercommitPercentWarning
+.PARAMETER RAMOCPercentWarn
     Used to specify a WARNING threshold for the Hyper-V average RAM overcommitment.
-.PARAMETER RAMOvercommitPercentCritical
+.PARAMETER RAMOCPercentCrit
     Used to specify a CRITICAL threshold for the Hyper-V average RAM overcommitment.
-.PARAMETER StorageOvercommitByteWarning
+.PARAMETER StorageOCByteWarn
     Used to specify a WARNING threshold for the Hyper-V Storage overcommitment in Byte.
-.PARAMETER StorageOvercommitByteCritical
+.PARAMETER StorageOCByteCrit
     Used to specify a CRITICAL threshold for the Hyper-V Storage overcommitment in Byte.
-.PARAMETER StorageOvercommitPercentWarning
+.PARAMETER StorageOCPercentWarn
     Used to specify a WARNING threshold for the Hyper-V average Storage overcommitment.
-.PARAMETER StorageOvercommitPercentCritical
+.PARAMETER StorageOCPercentCrit
     Used to specify a CRITICAL threshold for the Hyper-V average Storage overcommitment.
 .PARAMETER NoPerfData
     Disables the performance data output of this plugin. Default to FALSE.
@@ -83,24 +83,24 @@
 function Invoke-IcingaCheckHyperVOverCommitment()
 {
     param (
-        [array]$IncludeVms                = @(),
-        [array]$ExcludeVms                = @(),
-        [switch]$ActiveVms                = $FALSE,
-        $CPUCoreOvercommitWarning         = $null,
-        $CPUCoreOvercommitCritical        = $null,
-        $CPUOvercommitPercentWarning      = $null,
-        $CPUOvercommitPercentCritical     = $null,
-        $RAMOvercommitByteWarning         = $null,
-        $RAMOvercommitByteCritical        = $null,
-        $RAMOvercommitPercentWarning      = $null,
-        $RAMOvercommitPercentCritical     = $null,
-        $StorageOvercommitByteWarning     = $null,
-        $StorageOvercommitByteCritical    = $null,
-        $StorageOvercommitPercentWarning  = $null,
-        $StorageOvercommitPercentCritical = $null,
-        [switch]$NoPerfData               = $FALSE,
+        [array]$IncludeVms    = @(),
+        [array]$ExcludeVms    = @(),
+        [switch]$ActiveVms    = $FALSE,
+        $CPUCoreOCWarn        = $null,
+        $CPUCoreOCCrit        = $null,
+        $CPUOCPercentWarn     = $null,
+        $CPUOCPercentCrit     = $null,
+        $RAMOCByteWarn        = $null,
+        $RAMOCByteCrit        = $null,
+        $RAMOCPercentWarn     = $null,
+        $RAMOCPercentCrit     = $null,
+        $StorageOCByteWarn    = $null,
+        $StorageOCByteCrit    = $null,
+        $StorageOCPercentWarn = $null,
+        $StorageOCPercentCrit = $null,
+        [switch]$NoPerfData   = $FALSE,
         [ValidateSet(0, 1, 2)]
-        $Verbosity                        = 0
+        $Verbosity            = 0
     );
 
     # Create a main CheckPackage
@@ -108,10 +108,10 @@ function Invoke-IcingaCheckHyperVOverCommitment()
     # Get all information about the Hyper-V OverCommitment
     $HypervServer                  = Get-IcingaVirtualComputerInfo -IncludeVms $IncludeVms -ExcludeVms $ExcludeVms -ActiveVms:$ActiveVms;
     # Convert thresholds to Byte
-    $RAMOvercommitByteWarning      = (Convert-IcingaPluginThresholds -Threshold $RAMOvercommitByteWarning).Value;
-    $RAMOvercommitByteCritical     = (Convert-IcingaPluginThresholds -Threshold $RAMOvercommitByteCritical).Value;
-    $StorageOvercommitByteWarning  = (Convert-IcingaPluginThresholds -Threshold $StorageOvercommitByteWarning).Value;
-    $StorageOvercommitByteCritical = (Convert-IcingaPluginThresholds -Threshold $StorageOvercommitByteCritical).Value;
+    $RAMOCByteWarn     = (Convert-IcingaPluginThresholds -Threshold $RAMOCByteWarn).Value;
+    $RAMOCByteCrit     = (Convert-IcingaPluginThresholds -Threshold $RAMOCByteCrit).Value;
+    $StorageOCByteWarn = (Convert-IcingaPluginThresholds -Threshold $StorageOCByteWarn).Value;
+    $StorageOCByteCrit = (Convert-IcingaPluginThresholds -Threshold $StorageOCByteCrit).Value;
 
     # Create a CheckPackage for storage Overcommitment
     $OvercommitCheckPackage = New-IcingaCheckPackage -Name 'StorageOverCommit' -OperatorAnd -Verbose $Verbosity;
@@ -130,9 +130,9 @@ function Invoke-IcingaCheckHyperVOverCommitment()
                     -Minimum 0 `
                     -Maximum $StorageOverCommit.Capacity
             ).WarnOutOfRange(
-                $StorageOvercommitByteWarning
+                $StorageOCByteWarn
             ).CritOutOfRange(
-                $StorageOvercommitByteCritical
+                $StorageOCByteCrit
             )
         );
 
@@ -145,9 +145,9 @@ function Invoke-IcingaCheckHyperVOverCommitment()
                     -Minimum 0 `
                     -Maximum 100
             ).WarnOutOfRange(
-                $StorageOvercommitPercentWarning
+                $StorageOCPercentWarn
             ).CritOutOfRange(
-                $StorageOvercommitPercentCritical
+                $StorageOCPercentCrit
             )
         );
 
@@ -170,9 +170,9 @@ function Invoke-IcingaCheckHyperVOverCommitment()
                 -Minimum 0 `
                 -Maximum $HypervServer.Resources.RAMOverCommit.Capacity
         ).WarnOutOfRange(
-            $RAMOvercommitByteWarning
+            $RAMOCByteWarn
         ).CritOutOfRange(
-            $RAMOvercommitByteCritical
+            $RAMOCByteCrit
         )
     );
 
@@ -186,9 +186,9 @@ function Invoke-IcingaCheckHyperVOverCommitment()
                 -Minimum 0 `
                 -Maximum 100
         ).WarnOutOfRange(
-            $RAMOvercommitPercentWarning
+            $RAMOCPercentWarn
         ).CritOutOfRange(
-            $RAMOvercommitPercentCritical
+            $RAMOCPercentCrit
         )
     );
 
@@ -207,9 +207,9 @@ function Invoke-IcingaCheckHyperVOverCommitment()
                 -Minimum 0 `
                 -Maximum $HypervServer.Resources.CPUOverCommit.Available
         ).WarnOutOfRange(
-            $CPUCoreOvercommitWarning
+            $CPUCoreOCWarn
         ).CritOutOfRange(
-            $CPUCoreOvercommitCritical
+            $CPUCoreOCCrit
         )
     );
 
@@ -223,9 +223,9 @@ function Invoke-IcingaCheckHyperVOverCommitment()
                 -Minimum 0 `
                 -Maximum 100
         ).WarnOutOfRange(
-            $CPUOvercommitPercentWarning
+            $CPUOCPercentWarn
         ).CritOutOfRange(
-            $CPUOvercommitPercentCritical
+            $CPUOCPercentCrit
         )
     );
 
