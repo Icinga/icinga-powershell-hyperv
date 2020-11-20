@@ -37,18 +37,18 @@ To execute this plugin you will require to grant the following user permissions.
 | IncludeVms | Array | false | @() | Include only virtual machines with a specific name. Supports wildcard usage (*) |
 | ExcludeVms | Array | false | @() | Exclude virtual machines with a specific name. Supports wildcard usage (*) |
 | ActiveVms | SwitchParameter | false | False | Include only virtual machines that are currently running |
-| CPUCoreOvercommitWarning | Object | false |  | Warning threshold for Hyper-V CPU Cores overcommitment. |
-| CPUCoreOvercommitCritical | Object | false |  | Critical threshold for Hyper-V CPU Cores overcommitment. |
-| CPUOvercommitPercentWarning | Object | false |  | Warning threshold for Hyper-V average CPU overcommitment. |
-| CPUOvercommitPercentCritical | Object | false |  | Critical threshold for Hyper-V average CPU overcommitment. |
-| RAMOvercommitByteWarning | Object | false |  | Used to specify a WARNING threshold for the Hyper-V RAM overcommitment in Byte. |
-| RAMOvercommitByteCritical | Object | false |  | Used to specify a CRITICAL threshold for the Hyper-V RAM overcommitment in Byte. |
-| RAMOvercommitPercentWarning | Object | false |  | Used to specify a WARNING threshold for the Hyper-V average RAM overcommitment. |
-| RAMOvercommitPercentCritical | Object | false |  | Used to specify a CRITICAL threshold for the Hyper-V average RAM overcommitment. |
-| StorageOvercommitByteWarning | Object | false |  | Used to specify a WARNING threshold for the Hyper-V Storage overcommitment in Byte. |
-| StorageOvercommitByteCritical | Object | false |  | Used to specify a CRITICAL threshold for the Hyper-V Storage overcommitment in Byte. |
-| StorageOvercommitPercentWarning | Object | false |  | Used to specify a WARNING threshold for the Hyper-V average Storage overcommitment. |
-| StorageOvercommitPercentCritical | Object | false |  | Used to specify a CRITICAL threshold for the Hyper-V average Storage overcommitment. |
+| CPUCoreOCWarn | Object | false |  | Warning threshold for Hyper-V CPU Cores overcommitment. |
+| CPUCoreOCCrit | Object | false |  | Critical threshold for Hyper-V CPU Cores overcommitment. |
+| CPUOCPercentWarn | Object | false |  | Warning threshold for Hyper-V average CPU overcommitment. |
+| CPUOCPercentCrit | Object | false |  | Critical threshold for Hyper-V average CPU overcommitment. |
+| RAMOCByteWarn | Object | false |  | Used to specify a WARNING threshold for the Hyper-V RAM overcommitment in Byte. |
+| RAMOCByteCrit | Object | false |  | Used to specify a CRITICAL threshold for the Hyper-V RAM overcommitment in Byte. |
+| RAMOCPercentWarn | Object | false |  | Used to specify a WARNING threshold for the Hyper-V average RAM overcommitment. |
+| RAMOCPercentCrit | Object | false |  | Used to specify a CRITICAL threshold for the Hyper-V average RAM overcommitment. |
+| StorageOCByteWarn | Object | false |  | Used to specify a WARNING threshold for the Hyper-V Storage overcommitment in Byte. |
+| StorageOCByteCrit | Object | false |  | Used to specify a CRITICAL threshold for the Hyper-V Storage overcommitment in Byte. |
+| StorageOCPercentWarn | Object | false |  | Used to specify a WARNING threshold for the Hyper-V average Storage overcommitment. |
+| StorageOCPercentCrit | Object | false |  | Used to specify a CRITICAL threshold for the Hyper-V average Storage overcommitment. |
 | NoPerfData | SwitchParameter | false | False | Disables the performance data output of this plugin. Default to FALSE. |
 | Verbosity | Object | false | 0 | Changes the behavior of the plugin output which check states are printed: 0 (default): Only service checks/packages with state not OK will be printed 1: Only services with not OK will be printed including OK checks of affected check packages including Package config 2: Everything will be printed regardless of the check state |
 
