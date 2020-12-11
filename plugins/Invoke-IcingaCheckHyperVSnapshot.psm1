@@ -291,7 +291,7 @@ function Invoke-IcingaCheckHyperVSnapshot()
         $CheckPackage.AddCheck($SnapshotMainCheck);
     }
 
-    if ($HypervServer.Summary.ContainsKey('SnapshotLocated')) {
+    if ($VirtualComputers.Summary.ContainsKey('SnapshotLocated')) {
         $CheckPackage.AddCheck(
             (
                 New-IcingaCheck `
