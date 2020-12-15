@@ -149,6 +149,10 @@ function Invoke-IcingaCheckHyperVVMHealth()
     # we create here a hidden checkpackage
     if ($VirtualComputers.Summary.TotalVms -ne 0) {
         foreach ($item in $VirtualComputers.Summary.Keys) {
+            if ($item -eq 'AccessDeniedVms') {
+                continue;
+            }
+
             $HiddenCheckPackage.AddCheck(
                 (
                     New-IcingaCheck -Name $item -Value ($VirtualComputers.Summary[$item])
