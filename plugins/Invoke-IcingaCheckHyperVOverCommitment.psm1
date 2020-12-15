@@ -155,6 +155,17 @@ function Invoke-IcingaCheckHyperVOverCommitment()
         $OvercommitCheckPackage.AddCheck($PartitionPackage);
     }
 
+    if ([string]::IsNullOrEmpty($HypervServer.Summary.AccessDeniedVms) -eq $FALSE) {
+        foreach ($vm in $HypervServer.Summary.AccessDeniedVms) {
+            $OvercommitCheckPackage.AddCheck(
+                (
+                    New-IcingaCheck `
+                        -Name ([string]::Format('No access to VM {0} images on cluster volume', $vm)) -NoPerfData
+                ).SetUnknown()
+            );
+        }
+    }
+
     # we have to add the Storage CheckPackage to the main CheckPackage
     $CheckPackage.AddCheck($OvercommitCheckPackage);
 

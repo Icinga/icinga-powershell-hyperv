@@ -39,25 +39,27 @@ function Get-IcingaVirtualComputerInfo() {
     );
 
     # Get all information about the hyperv virtual Computers
-    $VirtualComputers   = Get-IcingaWindowsInformation -ClassName Msvm_SummaryInformation -Namespace 'Root\Virtualization\v2';
+    $VirtualComputers       = Get-IcingaWindowsInformation -ClassName Msvm_SummaryInformation -Namespace 'Root\Virtualization\v2';
     # Gather all information regarding virtual computers memory allocation
-    $VComputerMemorys   = Get-IcingaWindowsInformation -ClassName Msvm_MemorySettingData -Namespace 'Root\Virtualization\v2';
+    $VComputerMemorys       = Get-IcingaWindowsInformation -ClassName Msvm_MemorySettingData -Namespace 'Root\Virtualization\v2';
     # Get infos about virtual computers hard disk drive / VHDs
-    $VcomputerVHDs      = Get-IcingaWindowsInformation -ClassName Msvm_LogicalDisk -Namespace 'Root\Virtualization\v2';
-    $VComputerHardDisks = Get-IcingaPhysicalDiskInfo;
+    $VcomputerVHDs          = Get-IcingaWindowsInformation -ClassName Msvm_LogicalDisk -Namespace 'Root\Virtualization\v2';
+    $VComputerHardDisks     = Get-IcingaPhysicalDiskInfo;
     # Get the Partition where all virtual Computers are Stored
-    $VmPartitionsPath   = Get-IcingaWindowsInformation -ClassName Msvm_StorageAllocationSettingData -Namespace 'Root\Virtualization\v2';
+    $VmPartitionsPath       = Get-IcingaWindowsInformation -ClassName Msvm_StorageAllocationSettingData -Namespace 'Root\Virtualization\v2';
     # Gather all infos rgarding Virtual Computer CPU used
-    $CountCPUCores      = Get-IcingaCPUCount;
-    $VComputerRamLimit  = (Get-IcingaMemoryPerformanceCounter).'Memory Total Bytes';
-    $PluginInstalled    = $FALSE;
-    $CurrentVmsUsage    = 0;
-    $VComputerData      = @{
+    $CountCPUCores          = Get-IcingaCPUCount;
+    $VComputerRamLimit      = (Get-IcingaMemoryPerformanceCounter).'Memory Total Bytes';
+    $PluginInstalled        = $FALSE;
+    $CurrentVmsUsage        = 0;
+    [array]$AccessDeniedVms = @();
+    $VComputerData          = @{
         'VMs'       = @{ };
         'Summary'   = @{
-            'RunningVms' = 0;
-            'StoppedVms' = 0;
-            'TotalVms'   = 0;
+            'RunningVms'      = 0;
+            'StoppedVms'      = 0;
+            'TotalVms'        = 0;
+            'AccessDeniedVms' = '';
         };
         'Resources' = @{
             'RAMOverCommit'     = @{
@@ -217,7 +219,14 @@ function Get-IcingaVirtualComputerInfo() {
                 'Path'                                 = ([string]::Format('{0}{1}{2}', $snapshot.ConfigurationDataRoot, '\', $snapshot.ConfigurationFile));
             };
 
-            $SnapshotSize = Get-ChildItem -Path $SnapshotContent.Path | Select-Object Length;
+            if (Test-Path $SnapshotContent.Path) {
+                $SnapshotSize = Get-ChildItem -Path $SnapshotContent.Path | Select-Object Length;
+                $SnapshotContent.Add('Error', $null);
+            } else {
+                $SnapshotSize = @{ 'Length' = 0};
+                $SnapshotContent.Add('Error', 'PermissionDenied');
+            }
+
             $SnapshotContent.Add('Size', $SnapshotSize.Length);
 
             if ($details.Snapshots.Info.ContainsKey($SnapshotPart) -eq $FALSE) {
@@ -280,8 +289,12 @@ function Get-IcingaVirtualComputerInfo() {
                 'AutomaticDeallocation' = $vmPartition.AutomaticDeallocation;
                 'HostResource'          = $vmPartition.HostResource;
                 'Partition'             = $vmPath;
-                'CurrentUsage'          = (Get-ChildItem -Path ([string]$vmPartition.HostResource) | Select-Object Length).Length;
+                'CurrentUsage'          = 'PermissionDenied';
             };
+
+            if (Test-Path -Path ([string]$vmPartition.HostResource)) {
+                $details.CurrentUsage = (Get-Item -Path ([string]$vmPartition.HostResource) | Select-Object Length).Length;
+            }
 
             # If the partition doesn't exist in StorageOverCommit hashtable then add ones
             if ($VComputerData.Resources.StorageOverCommit.ContainsKey($vmPath) -eq $FALSE) {
@@ -342,7 +355,12 @@ function Get-IcingaVirtualComputerInfo() {
                 $VComputerData.Resources.StorageOverCommit[$details.Partition].Bytes += ($details.DiskCapacity);
             }
 
-            $CurrentVmsUsage += $details.CurrentUsage;
+            if ($details.CurrentUsage -ne 'PermissionDenied') {
+                $CurrentVmsUsage += $details.CurrentUsage;
+            } else {
+                $AccessDeniedVms += $vcomputer.ElementName;
+            }
+
             # we count up here to get the total number of vms that are still running
             $VComputerData.Summary.RunningVms++;
         } else {
@@ -497,6 +515,7 @@ function Get-IcingaVirtualComputerInfo() {
         $VComputerData.Resources.CPUOverCommit.Percent = ([System.Math]::Round((($VComputerData.Resources.CPUOverCommit.Cores / $CountCPUCores) * 100) - 100, 2));
     }
 
+    $VComputerData.Summary.AccessDeniedVms = $AccessDeniedVms;
     # Here we calculate how many Vms the Hyper-V server has in total
     $VComputerData.Summary.TotalVms = ($VComputerData.Summary.RunningVms + $VComputerData.Summary.StoppedVms);
     # Calculate the average Hyper-V RAM Overcommitment

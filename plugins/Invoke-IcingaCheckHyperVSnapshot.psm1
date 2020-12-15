@@ -136,6 +136,16 @@ function Invoke-IcingaCheckHyperVSnapshot()
         $virtualMachine    = $VirtualComputers.VMs[$vm];
         $SnapshotMainCheck = New-IcingaCheckPackage -Name $vm -OperatorAnd -Verbose $Verbosity;
 
+        if ($virtualMachine.Snapshots.Latest.Error -eq 'PermissionDenied') {
+            $IcingaCheck   = New-IcingaCheck -Name ([string]::Format('Snapshots: Permission denied to location "{0}"', $virtualMachine.Snapshots.Latest.Path)) -NoPerfData;
+            $IcingaCheck.SetUnknown() | Out-Null;
+            $SnapshotCheck = New-IcingaCheckPackage -Name $vm -OperatorAnd -Verbose $Verbosity;
+            $SnapshotCheck.AddCheck($IcingaCheck);
+            $CheckPackage.AddCheck($SnapshotCheck);
+
+            continue;
+        }
+
         # We continue if the vm should not have snapshots
         if ($virtualMachine.Snapshots.Info.Count -eq 0) {
             $NoSnapshotCheckPackage = New-IcingaCheckPackage -Name $vm -OperatorAnd -Verbose $Verbosity;
@@ -223,7 +233,7 @@ function Invoke-IcingaCheckHyperVSnapshot()
             );
 
             $AverageSnapshotSize     = [System.Math]::Truncate([System.Math]::Round($Partition.TotalUsed / $SnapshotsCount));
-            $CalculateTotalSnapshots = [System.Math]::Truncate([System.Math]::Round($Partition.FreeSpace / $AverageSnapshotSize, 2));
+            $CalculateTotalSnapshots = [System.Math]::Truncate([System.Math]::Round($Partition.FreeSpace / ([math]::Max($AverageSnapshotSize, 1)), 2));
 
             $SnapshotMainCheck.AddCheck(
                 (
