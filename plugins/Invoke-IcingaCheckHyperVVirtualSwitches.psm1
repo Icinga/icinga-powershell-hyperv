@@ -14,7 +14,7 @@
 
     ### Required User Groups
 
-    * Performance Log Users
+    * Performance Monitor Users
     * Hyper-V Administrator
 .PARAMETER Include
     With this parameter you can filter virtual switches for the check in. e.g. testswitch1, testswitch1.

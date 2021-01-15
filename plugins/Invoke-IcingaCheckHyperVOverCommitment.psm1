@@ -20,7 +20,7 @@
 
     ### Required User Groups
 
-    * Performance Log Users
+    * Performance Monitor Users
     * Hyper-V Administrator
 .PARAMETER IncludeVms
     Include only virtual machines with a specific name. Supports wildcard usage (*)
