@@ -218,7 +218,6 @@ function Invoke-IcingaCheckHyperVSnapshot()
                     New-IcingaCheck `
                         -Name ([string]::Format('{0} {1} Total Snapshot Size', $vm, $part)) `
                         -Value $Partition.TotalUsed `
-                        -BaseValue $Partition.Size `
                         -Unit 'B'
                 ).WarnOutOfRange(
                     $TotalSnapshotSizeWarning
@@ -262,9 +261,9 @@ function Invoke-IcingaCheckHyperVSnapshot()
         $SnapshotMainCheck.AddCheck(
             (
                 New-IcingaCheck `
-                    -Name ([string]::Format('{0}: Snapshot Size', $vm)) `
-                    -Value $virtualMachine.Snapshots.Latest.Size `
-                    -NoPerfData `
+                    -Name ([string]::Format('{0} {1} Total Snapshot Size', $vm, $part)) `
+                    -Value $Partition.TotalUsed `
+                    -BaseValue $Partition.Size `
                     -Unit 'B'
             ).WarnOutOfRange(
                 $SnapshotSizeWarning

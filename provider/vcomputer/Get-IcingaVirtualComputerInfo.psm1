@@ -31,7 +31,8 @@
     https://github.com/Icinga/icinga-powershell-hyperv
 #>
 
-function Get-IcingaVirtualComputerInfo() {
+function Get-IcingaVirtualComputerInfo()
+{
     param (
         [array]$IncludeVms = @(),
         [array]$ExcludeVms = @(),
@@ -76,9 +77,20 @@ function Get-IcingaVirtualComputerInfo() {
         };
     };
 
-    # In case of a Permissions Problem or if for some reason no DATA is retrieved from the WMI classes, we throw an exception
-    if ($null -eq $VirtualComputers -or $null -eq $VComputerMemorys -or $null -eq $VcomputerVHDs) {
-        Exit-IcingaThrowException -Force -ExceptionType 'Permission' -ExceptionThrown 'The user you are running this command with does not have permissions to access Hyper-V data on this host. Please add the user to the "Hyper-V Administrator" user group and restart the Icinga/PowerShell service afterwards' -CustomMessage 'Hyper-V access denied';
+    if (-Not (Test-IcingaHyperVInstalled)) {
+        Exit-IcingaThrowException -ExceptionType 'Custom' -CustomMessage 'Hyperv not installed' -ExceptionThrown 'The Hyper-V feature is not installed on this system.' -Force;
+        return $VComputerData;
+    }
+
+    $VMMSService = (Get-IcingaServices 'vmms').vmms;
+
+    if ($null -eq $VMMSService -Or $VMMSService.configuration.Status.raw -ne $ProviderEnums.ServiceStatus.Running) {
+        Exit-IcingaThrowException -ExceptionType 'Custom' -CustomMessage 'Service not running' -ExceptionThrown 'The required Hyper-V service "vmms" is not running.' -Force;
+        return $VComputerData;
+    }
+
+    if ($null -eq $VirtualComputers) {
+        return $VComputerData;
     }
 
     if (Test-IcingaFunction 'Get-IcingaClusterSharedVolumeData') {

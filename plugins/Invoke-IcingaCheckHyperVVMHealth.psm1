@@ -91,10 +91,10 @@ function Invoke-IcingaCheckHyperVVMHealth()
     );
 
     # Create a main CheckPackage, under which all following CheckPackages are added
-    $CheckPackage     = New-IcingaCheckPackage -Name 'Virtual Computers' -OperatorAnd -Verbose $Verbosity -AddSummaryHeader;
+    $CheckPackage       = New-IcingaCheckPackage -Name 'Virtual Computers' -OperatorAnd -Verbose $Verbosity -IgnoreEmptyPackage -AddSummaryHeader;
     $HiddenCheckPackage = New-IcingaCheckPackage -Name 'Hidden PerfData' -Hidden;
     # We get all information about the virtual machine from our provider
-    $VirtualComputers = Get-IcingaVirtualComputerInfo -IncludeVms $IncludeVms -ExcludeVms $ExcludeVms -ActiveVms:$ActiveVms;
+    $VirtualComputers   = Get-IcingaVirtualComputerInfo -IncludeVms $IncludeVms -ExcludeVms $ExcludeVms -ActiveVms:$ActiveVms;
 
     foreach ($vm in $VirtualComputers.VMs.Keys) {
         $virtualComputer = $VirtualComputers.VMs[$vm];
@@ -166,5 +166,5 @@ function Invoke-IcingaCheckHyperVVMHealth()
         $CheckPackage.AddCheck($HiddenCheckPackage);
     }
 
-    return (New-IcingaCheckresult -Check $CheckPackage -NoPerfData $NoPerfData -Compile);
+    return (New-IcingaCheckResult -Check $CheckPackage -NoPerfData $NoPerfData -Compile);
 }
