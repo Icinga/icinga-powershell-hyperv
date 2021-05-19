@@ -40,6 +40,7 @@
     0 (default): Only service checks/packages with state not OK will be printed
     1: Only services with not OK will be printed including OK checks of affected check packages including Package config
     2: Everything will be printed regardless of the check state
+    3: Identical to Verbose 2, but prints in addition the check package configuration e.g (All must be [OK])
 .EXAMPLE
     PS> icinga { Invoke-IcingaCheckHyperVVMHealth -ActiveVms -IncludeVms '*sales*' -Verbosity 2 }
     [OK] Check package "Virtual Computers" (Match All)
@@ -85,12 +86,12 @@ function Invoke-IcingaCheckHyperVVMHealth()
         [ValidateSet('Unknown', 'Other', 'Enabled', 'Disabled', 'Shutting Down', 'Not Applicable', 'Enabled but Offline', 'In Test', 'Deferred', 'Quiesce', 'Starting')]
         $VmEnabledState           = $null,
         [switch]$NegateVMState    = $FALSE,
-        [ValidateSet(0, 1, 2)]
+        [ValidateSet(0, 1, 2, 3)]
         $Verbosity                = 0
     );
 
     # Create a main CheckPackage, under which all following CheckPackages are added
-    $CheckPackage     = New-IcingaCheckPackage -Name 'Virtual Computers' -OperatorAnd -Verbose $Verbosity;
+    $CheckPackage     = New-IcingaCheckPackage -Name 'Virtual Computers' -OperatorAnd -Verbose $Verbosity -AddSummaryHeader;
     $HiddenCheckPackage = New-IcingaCheckPackage -Name 'Hidden PerfData' -Hidden;
     # We get all information about the virtual machine from our provider
     $VirtualComputers = Get-IcingaVirtualComputerInfo -IncludeVms $IncludeVms -ExcludeVms $ExcludeVms -ActiveVms:$ActiveVms;
