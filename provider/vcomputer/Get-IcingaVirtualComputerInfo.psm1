@@ -410,6 +410,11 @@ function Get-IcingaVirtualComputerInfo() {
         foreach ($VchardDisk in $VComputerHardDisks.Keys) {
             $OvercommitCalculated = $FALSE;
             $PhysicalDisk         = $VComputerHardDisks[$VchardDisk];
+
+            if ([string]::IsNullOrEmpty($details.Partition)) {
+                continue;
+            }
+
             if ($PhysicalDisk.DriveReference.ContainsKey($details.Partition) -eq $FALSE) {
                 continue;
             }
