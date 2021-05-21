@@ -32,9 +32,11 @@
 .PARAMETER CreationTimeCritical
     Critical threshold for each individual vms snapshots, how old they must be in seconds.
 .PARAMETER TotalSnapshotSizeWarning
-    Warning threshold for each individual vms total snapshots size in Byte.
+    Warning threshold for each individual vms total snapshots size. It is also possible to
+    enter e.g. 10% as threshold value, if you want a percentage comparison. Defaults to (B)
 .PARAMETER TotalSnapshotSizeCritical
-    Critical threshold for each individual vms total snapshots size in Byte.
+    Critical threshold for each individual vms total snapshots size. It is also possible to
+    enter e.g. 10% as threshold value, if you want a percentage comparison. Defaults to (B)
 .PARAMETER SnapshotSizeWarning
     Warning threshold for each individual vms snapshot size in Byte.
 .PARAMETER SnapshotSizeCritical
@@ -52,6 +54,7 @@
     0 (default): Only service checks/packages with state not OK will be printed
     1: Only services with not OK will be printed including OK checks of affected check packages including Package config
     2: Everything will be printed regardless of the check state
+    3: Identical to Verbose 2, but prints in addition the check package configuration e.g (All must be [OK])
 .EXAMPLE
     PS> icinga { Invoke-IcingaCheckHyperVSnapshot -ActiveVms -IncludeVms '*vm*' -Verbosity 2 }
     [OK] Check package "VM Snapshots" (Match All)
@@ -113,23 +116,14 @@ function Invoke-IcingaCheckHyperVSnapshot()
         $SnapshotSizePredictionCritical = $null,
         [switch]$EmptySnapshotCritical  = $FALSE,
         [switch]$NoPerfData             = $FALSE,
-        [ValidateSet(0, 1, 2)]
+        [ValidateSet(0, 1, 2, 3)]
         $Verbosity                      = 0
     );
 
     # Create a main CheckPackage, under which all following CheckPackages are added
-    $CheckPackage              = New-IcingaCheckPackage -Name 'VM Snapshots' -OperatorAnd -Verbose $Verbosity;
+    $CheckPackage              = New-IcingaCheckPackage -Name 'VM Snapshots' -OperatorAnd -Verbose $Verbosity -AddSummaryHeader;
     # We get all information about the virtual machine from our provider
     $VirtualComputers          = Get-IcingaVirtualComputerInfo -IncludeVms $IncludeVms -ExcludeVms $ExcludeVms -ActiveVms:$ActiveVms;
-    # We convert warn and critical thresholds of creation time to seconds
-    $CreationTimeWarning       = (Convert-IcingaPluginThresholds -Threshold $CreationTimeWarning).Value;
-    $CreationTimeCritical      = (Convert-IcingaPluginThresholds -Threshold $CreationTimeCritical).Value;
-
-    # Check Byte threshold for emptiness and convert to Bytes
-    $TotalSnapshotSizeWarning  = (Convert-IcingaPluginThresholds -Threshold $TotalSnapshotSizeWarning).Value;
-    $TotalSnapshotSizeCritical = (Convert-IcingaPluginThresholds -Threshold $TotalSnapshotSizeCritical).Value;
-    $SnapshotSizeWarning       = (Convert-IcingaPluginThresholds -Threshold $SnapshotSizeWarning).Value;
-    $SnapshotSizeCritical      = (Convert-IcingaPluginThresholds -Threshold $SnapshotSizeCritical).Value;
 
     # we go through all available vms
     foreach ($vm in $VirtualComputers.VMs.Keys) {
@@ -224,6 +218,7 @@ function Invoke-IcingaCheckHyperVSnapshot()
                     New-IcingaCheck `
                         -Name ([string]::Format('{0} {1} Total Snapshot Size', $vm, $part)) `
                         -Value $Partition.TotalUsed `
+                        -BaseValue $Partition.Size `
                         -Unit 'B'
                 ).WarnOutOfRange(
                     $TotalSnapshotSizeWarning

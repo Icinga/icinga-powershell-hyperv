@@ -20,6 +20,7 @@
     0 (default): Only service checks/packages with state not OK will be printed
     1: Only services with not OK will be printed including OK checks of affected check packages including Package config
     2: Everything will be printed regardless of the check state
+    3: Identical to Verbose 2, but prints in addition the check package configuration e.g (All must be [OK])
 .EXAMPLE
     PS> Invoke-IcingaCheckHyperVHealth -Verbosity 2
     [CRITICAL] Check package "Hyper-V Health Package" (Match All) - [CRITICAL] vmms Communication Status
@@ -46,11 +47,11 @@ function Invoke-IcingaCheckHyperVHealth()
 {
     param (
         [switch]$NoPerfData = $FALSE,
-        [ValidateSet(0, 1, 2)]
+        [ValidateSet(0, 1, 2, 3)]
         $Verbosity          = 0
     );
 
-    $CheckPackage         = New-IcingaCheckPackage -Name 'Hyper-V Health Package' -OperatorAnd -Verbose $Verbosity;
+    $CheckPackage         = New-IcingaCheckPackage -Name 'Hyper-V Health Package' -OperatorAnd -Verbose $Verbosity -AddSummaryHeader;
     $ServicesCheckPackage = New-IcingaCheckPackage -Name 'Services Package' -OperatorAnd -Verbose $Verbosity;
     $GetHypervHostDetail  = Get-IcingaHypervHostInfo;
     $GetServices          = Get-IcingaServices -Service @(

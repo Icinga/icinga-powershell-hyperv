@@ -35,6 +35,7 @@
     0 (default): Only service checks/packages with state not OK will be printed
     1: Only services with not OK will be printed including OK checks of affected check packages including Package config
     2: Everything will be printed regardless of the check state
+    3: Identical to Verbose 2, but prints in addition the check package configuration e.g (All must be [OK])
 .EXAMPLE
     PS> Invoke-IcingaCheckHyperVVirtualSwitches -Verbosity 2
     [OK] Check package "Virtual Switches" (Match All)
@@ -71,12 +72,12 @@ function Invoke-IcingaCheckHyperVVirtualSwitches()
         [ValidateSet('OK', 'Error', 'Degraded', 'Unknown', 'Pred Fail', 'Starting', 'Stopping', 'Service', 'Stressed', 'NonRecover', 'No Contact', 'Lost Comm')]
         [array]$Critical    = @(),
         [switch]$NoPerfData = $FALSE,
-        [ValidateSet(0, 1, 2)]
+        [ValidateSet(0, 1, 2, 3)]
         $Verbosity          = 0
     );
 
     # Create a basic CheckPackage, where all following CheckPackages and checks are appended
-    $CheckPackage    = New-IcingaCheckPackage -Name 'Virtual Switches' -OperatorAnd -Verbose $Verbosity;
+    $CheckPackage    = New-IcingaCheckPackage -Name 'Virtual Switches' -OperatorAnd -Verbose $Verbosity -AddSummaryHeader;
     # Get all the necessary information from the provider regarding virtual switches
     $VirtualSwitches = Get-IcingaHypervVirtualSwitches `
         -IncludeSwitches $Include `

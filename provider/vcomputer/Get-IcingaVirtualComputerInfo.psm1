@@ -255,9 +255,14 @@ function Get-IcingaVirtualComputerInfo() {
 
                 [string]$DiskId = $PhysicalDisk.DriveReference[$SnapshotPart];
                 $FreeSpace      = $PhysicalDisk.PartitionLayout[$DiskId].FreeSpace;
+                $PartSize       = $PhysicalDisk.PartitionLayout[$DiskId].Size;
 
                 if ($details.Snapshots.Info[$SnapshotPart].ContainsKey('FreeSpace') -eq $FALSE) {
                     $details.Snapshots.Info[$SnapshotPart].Add('FreeSpace', $FreeSpace);
+                }
+
+                if ($details.Snapshots.Info[$SnapshotPart].ContainsKey('Size') -eq $FALSE) {
+                    $details.Snapshots.Info[$SnapshotPart].Add('Size', $PartSize);
                 }
 
                 break;
