@@ -26,6 +26,12 @@
     Exclude virtual machines with a specific name. Supports wildcard usage (*)
 .PARAMETER ActiveVms
     Include only virtual machines that are currently running
+.PARAMETER WarningActiveVms
+    Allows to monitor on how many active VM's are currently present and throws a
+    warning in case it is within the threshold
+.PARAMETER CriticalActiveVms
+    Allows to monitor on how many active VM's are currently present and throws a
+    warning in case it is within the threshold
 .PARAMETER SkipVMHeartbeat
     Skips the current virtual machine heartbeat status check.
 .PARAMETER VmEnabledState
@@ -75,12 +81,15 @@
 .LINK
     https://github.com/Icinga/icinga-powershell-hyperv
 #>
+
 function Invoke-IcingaCheckHyperVVMHealth()
 {
     param (
         [array]$IncludeVms        = @(),
         [array]$ExcludeVms        = @(),
         [switch]$ActiveVms        = $FALSE,
+        $WarningActiveVms         = $null,
+        $CriticalActiveVms        = $null,
         [switch]$NoPerfData       = $FALSE,
         [switch]$SkipVMHeartbeat  = $FALSE,
         [ValidateSet('Unknown', 'Other', 'Enabled', 'Disabled', 'Shutting Down', 'Not Applicable', 'Enabled but Offline', 'In Test', 'Deferred', 'Quiesce', 'Starting')]
@@ -95,6 +104,13 @@ function Invoke-IcingaCheckHyperVVMHealth()
     $HiddenCheckPackage = New-IcingaCheckPackage -Name 'Hidden PerfData' -Hidden;
     # We get all information about the virtual machine from our provider
     $VirtualComputers   = Get-IcingaVirtualComputerInfo -IncludeVms $IncludeVms -ExcludeVms $ExcludeVms -ActiveVms:$ActiveVms;
+
+    $ActiveVMCountCheck = New-IcingaCheck `
+        -Name 'Active VMs' `
+        -Value $VirtualComputers.Summary.RunningVms `
+        -NoPerfData;
+
+    $CheckPackage.AddCheck($ActiveVMCountCheck.WarnOutOfRange($WarningActiveVms).CritOutOfRange($CriticalActiveVms));
 
     foreach ($vm in $VirtualComputers.VMs.Keys) {
         $virtualComputer = $VirtualComputers.VMs[$vm];
