@@ -35,6 +35,8 @@ To execute this plugin you will require to grant the following user permissions.
 | IncludeVms | Array | false | @() | Include only virtual machines with a specific name. Supports wildcard usage (*) |
 | ExcludeVms | Array | false | @() | Exclude virtual machines with a specific name. Supports wildcard usage (*) |
 | ActiveVms | SwitchParameter | false | False | Include only virtual machines that are currently running |
+| WarningActiveVms | Object | false |  | Allows to monitor on how many active VM's are currently present and throws a warning in case it is within the threshold |
+| CriticalActiveVms | Object | false |  | Allows to monitor on how many active VM's are currently present and throws a warning in case it is within the threshold |
 | NoPerfData | SwitchParameter | false | False | Disables the performance data output of this plugin. |
 | SkipVMHeartbeat | SwitchParameter | false | False | Skips the current virtual machine heartbeat status check. |
 | VmEnabledState | Object | false |  | Critical threshold for the Hyper-V VM current status |
