@@ -6,7 +6,7 @@ documentation before upgrading to a new release.
 
 Released closed milestones can be found on [GitHub](https://github.com/Icinga/icinga-powershell-hyperv/milestones?state=closed).
 
-## 1.0.0 (pending)
+## 1.0.0 (2021-06-10)
 
 [Issue and PRs](https://github.com/Icinga/icinga-powershell-hyperv/milestone/1?closed=1)
 
@@ -14,4 +14,8 @@ Released closed milestones can be found on [GitHub](https://github.com/Icinga/ic
 
 This release adds the following new plugins:
 
-* [Invoke-IcingaCheckHyperVHealth](https://icinga.com/docs/windows/latest/hyperv/doc/plugins/01-Invoke-IcingaChecHyperVHealth/): Allows you to monitor Windows Hyper-V health with Icinga, i.e it checks the availability and state of the Hyper-V server.
+* Invoke-IcingaCheckHyperVHealth
+* Invoke-IcingaCheckHyperVOverCommitment
+* Invoke-IcingaCheckHyperVSnapshot
+* Invoke-IcingaCheckHyperVVirtualSwitches
+* Invoke-IcingaCheckHyperVVMHealth
