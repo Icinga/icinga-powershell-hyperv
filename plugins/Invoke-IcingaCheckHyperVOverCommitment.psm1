@@ -110,7 +110,7 @@ function Invoke-IcingaCheckHyperVOverCommitment()
     $HypervServer                  = Get-IcingaVirtualComputerInfo -IncludeVms $IncludeVms -ExcludeVms $ExcludeVms -ActiveVms:$ActiveVms;
 
     # Create a CheckPackage for storage Overcommitment
-    $OvercommitCheckPackage = New-IcingaCheckPackage -Name 'StorageOverCommit' -OperatorAnd -Verbose $Verbosity;
+    $OvercommitCheckPackage = New-IcingaCheckPackage -Name 'StorageOverCommit' -OperatorAnd -Verbose $Verbosity -IgnoreEmptyPackage;
     # When we are at StorageOvercommitment, we have to go through all available partitions and build CheckPackages
     foreach ($storage in $HypervServer.Resources.StorageOverCommit.Keys) {
         $StorageOverCommit = $HypervServer.Resources.StorageOverCommit[$storage];
@@ -166,7 +166,7 @@ function Invoke-IcingaCheckHyperVOverCommitment()
     $CheckPackage.AddCheck($OvercommitCheckPackage);
 
     # Create a CheckPackage for RAM Overcommitment
-    $OvercommitCheckPackage = New-IcingaCheckPackage -Name 'RAMOverCommit' -OperatorAnd -Verbose $Verbosity;
+    $OvercommitCheckPackage = New-IcingaCheckPackage -Name 'RAMOverCommit' -OperatorAnd -Verbose $Verbosity -IgnoreEmptyPackage;
     # Add Bytes RAMOvercommit IcingaCheck
     $OvercommitCheckPackage.AddCheck(
         (
@@ -203,7 +203,7 @@ function Invoke-IcingaCheckHyperVOverCommitment()
     $CheckPackage.AddCheck($OvercommitCheckPackage);
 
     # Create a CheckPackage for CPU Overcommitment
-    $OvercommitCheckPackage = New-IcingaCheckPackage -Name 'CPUOverCommit' -OperatorAnd -Verbose $Verbosity;
+    $OvercommitCheckPackage = New-IcingaCheckPackage -Name 'CPUOverCommit' -OperatorAnd -Verbose $Verbosity -IgnoreEmptyPackage;
     # Add CPU Cores overcommitment CheckPackage
     $OvercommitCheckPackage.AddCheck(
         (
