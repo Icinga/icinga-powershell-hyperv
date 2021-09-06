@@ -1,4 +1,5 @@
 # Icinga Powershell Hyperv CHANGELOG
+
 **The latest release announcements are available on [https://icinga.com/blog/](https://icinga.com/blog/).**
 
 Please read the [upgrading](30-Upgrading-Plugins.md)
