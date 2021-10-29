@@ -47,6 +47,9 @@
     Critical threshold for predicting the size of snapshots taken for each Vm before the partition becomes full.
 .PARAMETER EmptySnapshotCritical
     Sets the CheckPackage CRITICAL if the Hyper-V VM has no snapshots.
+.PARAMETER AvoidEmptyCheck
+    Overrides the default behaviour of the plugin in case no virtual machine is present on the system.
+    Instead of returning `Unknown` the plugin will return `Ok` instead if this argument is set.
 .PARAMETER NoPerfData
     Disables the performance data output of this plugin.
 .PARAMETER Verbosity
@@ -115,15 +118,16 @@ function Invoke-IcingaCheckHyperVSnapshot()
         $SnapshotSizePredictionWarning  = $null,
         $SnapshotSizePredictionCritical = $null,
         [switch]$EmptySnapshotCritical  = $FALSE,
+        [switch]$AvoidEmptyCheck        = $FALSE,
         [switch]$NoPerfData             = $FALSE,
         [ValidateSet(0, 1, 2, 3)]
         $Verbosity                      = 0
     );
 
     # Create a main CheckPackage, under which all following CheckPackages are added
-    $CheckPackage              = New-IcingaCheckPackage -Name 'VM Snapshots' -OperatorAnd -Verbose $Verbosity -AddSummaryHeader;
+    $CheckPackage     = New-IcingaCheckPackage -Name 'VM Snapshots' -OperatorAnd -Verbose $Verbosity -AddSummaryHeader -IgnoreEmptyPackage:$AvoidEmptyCheck;
     # We get all information about the virtual machine from our provider
-    $VirtualComputers          = Get-IcingaVirtualComputerInfo -IncludeVms $IncludeVms -ExcludeVms $ExcludeVms -ActiveVms:$ActiveVms;
+    $VirtualComputers = Get-IcingaVirtualComputerInfo -IncludeVms $IncludeVms -ExcludeVms $ExcludeVms -ActiveVms:$ActiveVms;
 
     # we go through all available vms
     foreach ($vm in $VirtualComputers.VMs.Keys) {

@@ -28,6 +28,9 @@
     Warning threshold for Switch Status indicates that an element is functioning properly, but is predicating a failure.
 .PARAMETER Critical
     Critical threshold for Switch Status indicates that an element is functioning properly, but is predicating a failure.
+.PARAMETER AvoidEmptyCheck
+    Overrides the default behaviour of the plugin in case no virtual switch is present on the system.
+    Instead of returning `Unknown` the plugin will return `Ok` instead if this argument is set.
 .PARAMETER NoPerfData
     Disables the performance data output of this plugin
 .PARAMETER Verbosity
@@ -62,22 +65,23 @@
 #>
 function Invoke-IcingaCheckHyperVVirtualSwitches()
 {
-    param(
-        [array]$Include     = @(),
-        [array]$Exclude     = @(),
-        [switch]$Internal   = $FALSE,
-        [switch]$External   = $FALSE,
+    param (
+        [array]$Include          = @(),
+        [array]$Exclude          = @(),
+        [switch]$Internal        = $FALSE,
+        [switch]$External        = $FALSE,
         [ValidateSet('OK', 'Error', 'Degraded', 'Unknown', 'Pred Fail', 'Starting', 'Stopping', 'Service', 'Stressed', 'NonRecover', 'No Contact', 'Lost Comm')]
-        [array]$Warning     = @(),
+        [array]$Warning          = @(),
         [ValidateSet('OK', 'Error', 'Degraded', 'Unknown', 'Pred Fail', 'Starting', 'Stopping', 'Service', 'Stressed', 'NonRecover', 'No Contact', 'Lost Comm')]
-        [array]$Critical    = @(),
-        [switch]$NoPerfData = $FALSE,
+        [array]$Critical         = @(),
+        [switch]$AvoidEmptyCheck = $FALSE,
+        [switch]$NoPerfData      = $FALSE,
         [ValidateSet(0, 1, 2, 3)]
-        $Verbosity          = 0
+        $Verbosity               = 0
     );
 
     # Create a basic CheckPackage, where all following CheckPackages and checks are appended
-    $CheckPackage    = New-IcingaCheckPackage -Name 'Virtual Switches' -OperatorAnd -Verbose $Verbosity -AddSummaryHeader;
+    $CheckPackage    = New-IcingaCheckPackage -Name 'Virtual Switches' -OperatorAnd -Verbose $Verbosity -AddSummaryHeader -IgnoreEmptyPackage:$AvoidEmptyCheck;
     # Get all the necessary information from the provider regarding virtual switches
     $VirtualSwitches = Get-IcingaHypervVirtualSwitches `
         -IncludeSwitches $Include `
