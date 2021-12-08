@@ -19,7 +19,8 @@
         'Invoke-IcingaCheckHyperVOverCommitment',
         'Invoke-IcingaCheckHyperVSnapshot',
         'Invoke-IcingaCheckHyperVVirtualSwitches',
-        'Invoke-IcingaCheckHyperVVMHealth'
+        'Invoke-IcingaCheckHyperVVMHealth',
+        'Invoke-IcingaCheckHyperVVMM'
     )
     CmdletsToExport     = @(
     )
