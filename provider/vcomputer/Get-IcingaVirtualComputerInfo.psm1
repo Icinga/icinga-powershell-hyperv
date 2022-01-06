@@ -488,7 +488,7 @@ function Get-IcingaVirtualComputerInfo()
             break;
         }
 
-        $VComputerData.VMs.Add($vcomputer.ElementName, $details);
+        $VComputerData.VMs.Add($vcomputer.InstanceID, $details);
     }
 
     if ($VComputerData.VMs.Count -eq 0) {

@@ -132,12 +132,12 @@ function Invoke-IcingaCheckHyperVSnapshot()
     # we go through all available vms
     foreach ($vm in $VirtualComputers.VMs.Keys) {
         $virtualMachine    = $VirtualComputers.VMs[$vm];
-        $SnapshotMainCheck = New-IcingaCheckPackage -Name $vm -OperatorAnd -Verbose $Verbosity;
+        $SnapshotMainCheck = New-IcingaCheckPackage -Name $virtualMachine.ElementName -OperatorAnd -Verbose $Verbosity;
 
         if ($virtualMachine.Snapshots.Latest.Error -eq 'PermissionDenied') {
             $IcingaCheck   = New-IcingaCheck -Name ([string]::Format('Snapshots: Permission denied to location "{0}"', $virtualMachine.Snapshots.Latest.Path)) -NoPerfData;
             $IcingaCheck.SetUnknown() | Out-Null;
-            $SnapshotCheck = New-IcingaCheckPackage -Name $vm -OperatorAnd -Verbose $Verbosity;
+            $SnapshotCheck = New-IcingaCheckPackage -Name $virtualMachine.ElementName -OperatorAnd -Verbose $Verbosity;
             $SnapshotCheck.AddCheck($IcingaCheck);
             $CheckPackage.AddCheck($SnapshotCheck);
 
@@ -146,8 +146,8 @@ function Invoke-IcingaCheckHyperVSnapshot()
 
         # We continue if the vm should not have snapshots
         if ($virtualMachine.Snapshots.Info.Count -eq 0) {
-            $NoSnapshotCheckPackage = New-IcingaCheckPackage -Name $vm -OperatorAnd -Verbose $Verbosity;
-            $SnapshotCheck          = New-IcingaCheckPackage -Name $vm -OperatorAnd -Verbose $Verbosity;
+            $NoSnapshotCheckPackage = New-IcingaCheckPackage -Name $virtualMachine.ElementName -OperatorAnd -Verbose $Verbosity;
+            $SnapshotCheck          = New-IcingaCheckPackage -Name $virtualMachine.ElementName -OperatorAnd -Verbose $Verbosity;
             $IcingaCheck            = New-IcingaCheck -Name 'No snapshots created' -NoPerfData;
 
             if ($EmptySnapshotCritical) {
@@ -207,7 +207,7 @@ function Invoke-IcingaCheckHyperVSnapshot()
             $SnapshotMainCheck.AddCheck(
                 (
                     New-IcingaCheck `
-                        -Name ([string]::Format('{0} {1} Count', $vm, $part)) `
+                        -Name ([string]::Format('{0} {1} Count', $virtualMachine.ElementName, $part)) `
                         -Value $SnapshotsCount `
                         -Unit 'c'
                 ).WarnOutOfRange(
@@ -220,7 +220,7 @@ function Invoke-IcingaCheckHyperVSnapshot()
             $SnapshotMainCheck.AddCheck(
                 (
                     New-IcingaCheck `
-                        -Name ([string]::Format('{0} {1} Total Snapshot Size', $vm, $part)) `
+                        -Name ([string]::Format('{0} {1} Total Snapshot Size', $virtualMachine.ElementName, $part)) `
                         -Value $Partition.TotalUsed `
                         -Unit 'B'
                 ).WarnOutOfRange(
@@ -236,7 +236,7 @@ function Invoke-IcingaCheckHyperVSnapshot()
             $SnapshotMainCheck.AddCheck(
                 (
                     New-IcingaCheck `
-                        -Name ([string]::Format('{0} {1} Snapshot count prediction', $vm, $part)) `
+                        -Name ([string]::Format('{0} {1} Snapshot count prediction', $virtualMachine.ElementName, $part)) `
                         -Value $CalculateTotalSnapshots `
                         -Unit 'c'
                 ).WarnOutOfRange(
@@ -251,7 +251,7 @@ function Invoke-IcingaCheckHyperVSnapshot()
         $SnapshotMainCheck.AddCheck(
             (
                 New-IcingaCheck `
-                    -Name ([string]::Format('{0}: Latest Snapshot Creation Delta', $vm)) `
+                    -Name ([string]::Format('{0}: Latest Snapshot Creation Delta', $virtualMachine.ElementName)) `
                     -Value (Compare-IcingaUnixTimeWithDateTime -DateTime $virtualMachine.Snapshots.Latest.CreationTime) `
                     -Unit 's'
             ).WarnOutOfRange(
@@ -265,7 +265,7 @@ function Invoke-IcingaCheckHyperVSnapshot()
         $SnapshotMainCheck.AddCheck(
             (
                 New-IcingaCheck `
-                    -Name ([string]::Format('{0} {1} Total Snapshot Size', $vm, $part)) `
+                    -Name ([string]::Format('{0} {1} Total Snapshot Size', $virtualMachine.ElementName, $part)) `
                     -Value $Partition.TotalUsed `
                     -BaseValue $Partition.Size `
                     -Unit 'B'
@@ -280,7 +280,7 @@ function Invoke-IcingaCheckHyperVSnapshot()
         $SnapshotMainCheck.AddCheck(
             (
                 New-IcingaCheck `
-                    -Name ([string]::Format('{0}: Latest Snapshot Description', $vm)) `
+                    -Name ([string]::Format('{0}: Latest Snapshot Description', $virtualMachine.ElementName)) `
                     -Value $virtualMachine.Snapshots.Latest.Description `
                     -NoPerfData
             )
@@ -290,7 +290,7 @@ function Invoke-IcingaCheckHyperVSnapshot()
         $SnapshotMainCheck.AddCheck(
             (
                 New-IcingaCheck `
-                    -Name ([string]::Format('{0}: Latest Snapshot Name', $vm)) `
+                    -Name ([string]::Format('{0}: Latest Snapshot Name', $virtualMachine.ElementName)) `
                     -Value $virtualMachine.Snapshots.Latest.ElementName `
                     -NoPerfData
             )
