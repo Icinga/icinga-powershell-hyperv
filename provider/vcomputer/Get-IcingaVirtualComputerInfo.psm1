@@ -231,7 +231,7 @@ function Get-IcingaVirtualComputerInfo()
                 'Path'                                 = ([string]::Format('{0}{1}{2}', $snapshot.ConfigurationDataRoot, '\', $snapshot.ConfigurationFile));
             };
 
-            if (Test-Path $SnapshotContent.Path) {
+            if (Test-Path $SnapshotContent.Path -ErrorAction SilentlyContinue) {
                 $SnapshotSize = Get-ChildItem -Path $SnapshotContent.Path | Select-Object Length;
                 $SnapshotContent.Add('Error', $null);
             } else {
