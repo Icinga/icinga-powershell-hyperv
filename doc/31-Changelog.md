@@ -14,6 +14,7 @@ Released closed milestones can be found on [GitHub](https://github.com/Icinga/ic
 ### Bugfixes
 
 * [#41](https://github.com/Icinga/icinga-powershell-hyperv/issues/41) Fixes `UNKNOWN` on overcommitment check, in case no virtual machines are present on the host
+* [#49](https://github.com/Icinga/icinga-powershell-hyperv/issues/49) Fixes an exception in case machines on the system are present with the identical name
 * [#53](https://github.com/Icinga/icinga-powershell-hyperv/pull/53) Fixes exception in case no permission is granted to snapshot directory
 
 ### Enhancements

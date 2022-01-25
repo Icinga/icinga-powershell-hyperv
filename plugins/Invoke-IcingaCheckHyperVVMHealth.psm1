@@ -114,12 +114,12 @@ function Invoke-IcingaCheckHyperVVMHealth()
 
     foreach ($vm in $VirtualComputers.VMs.Keys) {
         $virtualComputer = $VirtualComputers.VMs[$vm];
-        $VMCheckPackage  = New-IcingaCheckPackage -Name $vm -OperatorAnd -Verbose $Verbosity;
+        $VMCheckPackage  = New-IcingaCheckPackage -Name $virtualComputer.ElementName -OperatorAnd -Verbose $Verbosity;
 
         # Heartbeat check is always OK if the VM is not started
         if ($virtualComputer.EnabledState -eq $HypervProviderEnums.VMEnabledStateName.Enabled) {
             $HeartBeatCheck = New-IcingaCheck `
-                -Name ([string]::Format('{0} Heartbeat', $vm)) `
+                -Name ([string]::Format('{0} Heartbeat', $virtualComputer.ElementName)) `
                 -Value $virtualComputer.Heartbeat `
                 -Translation $HypervProviderEnums.VMHeartbeat;
 
@@ -137,7 +137,7 @@ function Invoke-IcingaCheckHyperVVMHealth()
         }
 
         $EnabledStateCheck = New-IcingaCheck `
-            -Name ([string]::Format('{0} State', $vm)) `
+            -Name ([string]::Format('{0} State', $virtualComputer.ElementName)) `
             -Value $virtualComputer.EnabledState `
             -Translation $HypervProviderEnums.VMEnabledState;
 
@@ -152,7 +152,7 @@ function Invoke-IcingaCheckHyperVVMHealth()
         $VMCheckPackage.AddCheck(
             (
                 New-IcingaCheck `
-                    -Name ([string]::Format('{0} HealthState', $vm)) `
+                    -Name ([string]::Format('{0} HealthState', $virtualComputer.ElementName)) `
                     -Value $virtualComputer.HealthState `
                     -Translation $HypervProviderEnums.VMHealthState
             ).WarnIfNotMatch(
