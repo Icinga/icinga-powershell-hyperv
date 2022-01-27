@@ -282,7 +282,7 @@ function Get-IcingaVirtualComputerInfo()
         }
 
         # Sort our Snapshots based on the creation Time
-        $details.Snapshots.List = $details.Snapshots.List | Sort-Object -Property @{Expression = { [datetime]$_.CreationTime }; Descending = $TRUE };
+        $details.Snapshots.List = $details.Snapshots.List | ConvertTo-IcingaSecureSortedArray -MemberName 'CreationTime' -Descending;
 
         # We are going to loop through all available vm partitions
         foreach ($vmPartition in $VmPartitionsPath) {

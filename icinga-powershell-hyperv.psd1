@@ -7,7 +7,7 @@
     Description       = 'A collection of Hyper-V plugins, which serve to monitor Hyper-V systems'
     PowerShellVersion = '4.0'
     RequiredModules   = @(
-        @{ModuleName = 'icinga-powershell-framework'; ModuleVersion = '1.5.0' },
+        @{ModuleName = 'icinga-powershell-framework'; ModuleVersion = '1.8.0' },
         @{ModuleName = 'icinga-powershell-plugins'; ModuleVersion = '1.5.0' }
     )
     NestedModules     = @(
