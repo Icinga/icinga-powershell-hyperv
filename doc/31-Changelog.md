@@ -18,6 +18,7 @@ Released closed milestones can be found on [GitHub](https://github.com/Icinga/ic
 * [#52](https://github.com/Icinga/icinga-powershell-hyperv/issues/52) Fixes `This argument does not support the % unit` for `Total Snapshot Size`, caused by duplicate entry
 * [#53](https://github.com/Icinga/icinga-powershell-hyperv/pull/53) Fixes exception in case no permission is granted to snapshot directory
 * [#55](https://github.com/Icinga/icinga-powershell-hyperv/pull/55) Fixes JEA error which detected `ScriptBlocks` in the plugin collection
+* [#57](https://github.com/Icinga/icinga-powershell-hyperv/pull/57) Fixes memory unit which was calculated in `MB` instead of `Bytes` and fixes CPU overcommitment, which could result in negative usage values if there is not overcommitment
 
 ### Enhancements
 

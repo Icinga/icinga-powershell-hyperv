@@ -341,10 +341,10 @@ function Get-IcingaVirtualComputerInfo()
                 $details.Add('DynamicMemoryAllocated', $memory.DynamicMemoryEnabled);
 
                 if ($memory.DynamicMemoryEnabled) {
-                    $VComputerData.Resources.RAMOverCommit.Bytes += $memory.Limit;
+                    $VComputerData.Resources.RAMOverCommit.Bytes += ($memory.Limit * 1024 * 1024);
                     $details.Add('MemoryCapacity', $memory.Limit);
                 } else {
-                    $VComputerData.Resources.RAMOverCommit.Bytes += $memory.VirtualQuantity;
+                    $VComputerData.Resources.RAMOverCommit.Bytes += ($memory.VirtualQuantity * 1024 * 1024);
                     $details.Add('MemoryCapacity', $memory.VirtualQuantity);
                 }
             }
@@ -535,6 +535,10 @@ function Get-IcingaVirtualComputerInfo()
         $VComputerData.Resources.CPUOverCommit.Percent = 100;
     } else {
         $VComputerData.Resources.CPUOverCommit.Percent = ([System.Math]::Round((($VComputerData.Resources.CPUOverCommit.Cores / $CountCPUCores) * 100) - 100, 2));
+
+        if ($VComputerData.Resources.CPUOverCommit.Percent -le 0) {
+            $VComputerData.Resources.CPUOverCommit.Percent = 0;
+        }
     }
 
     $VComputerData.Summary.AccessDeniedVms = $AccessDeniedVms;
@@ -542,6 +546,7 @@ function Get-IcingaVirtualComputerInfo()
     $VComputerData.Summary.TotalVms = ($VComputerData.Summary.RunningVms + $VComputerData.Summary.StoppedVms);
     # Calculate the average Hyper-V RAM Overcommitment
     $RAMUsedPercent = ([System.Math]::Round((($VComputerData.Resources.RAMOverCommit.Bytes / $VComputerRamLimit) * 100) - 100, 2));
+
     if ($RAMUsedPercent -le 0) {
         $RAMUsedPercent = 0;
     }
