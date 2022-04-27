@@ -23,6 +23,7 @@ Released closed milestones can be found on [GitHub](https://github.com/Icinga/ic
 ### Enhancements
 
 * [#42](https://github.com/Icinga/icinga-powershell-hyperv/issues/42) Adds switch to `Invoke-IcingaCheckHyperVSnapshot` and `Invoke-IcingaCheckHyperVVirtualSwitches` to mitigate state from `Unknown` to `Ok`, in case no virtual machines or virtual switches are present on the system
+* [#58](https://github.com/Icinga/icinga-powershell-hyperv/pull/58) Adds support for Icinga for Windows v1.9.0 module isolation
 
 ## 1.0.0 (2021-06-10)
 

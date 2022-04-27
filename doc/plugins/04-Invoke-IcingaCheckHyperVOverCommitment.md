@@ -51,7 +51,7 @@ To execute this plugin you will require to grant the following user permissions.
 | StorageOCPercentCrit | Object | false |  | Used to specify a CRITICAL threshold for the Hyper-V average Storage overcommitment. |
 | NoPerfData | SwitchParameter | false | False | Disables the performance data output of this plugin. Default to FALSE. |
 | Verbosity | Object | false | 0 | Changes the behavior of the plugin output which check states are printed: 0 (default): Only service checks/packages with state not OK will be printed 1: Only services with not OK will be printed including OK checks of affected check packages including Package config 2: Everything will be printed regardless of the check state 3: Identical to Verbose 2, but prints in addition the check package configuration e.g (All must be [OK]) |
-| ThresholdInterval | Object |  |  | Change the value your defined threshold checks against from the current value to a collected time threshold of the Icinga for Windows daemon, as described [here](https://icinga.com/docs/icinga-for-windows/latest/doc/service/10-Register-Service-Checks/). An example for this argument would be 1m or 15m which will use the average of 1m or 15m for monitoring. |
+| ThresholdInterval | String |  |  | Change the value your defined threshold checks against from the current value to a collected time threshold of the Icinga for Windows daemon, as described [here](https://icinga.com/docs/icinga-for-windows/latest/doc/service/10-Register-Service-Checks/). An example for this argument would be 1m or 15m which will use the average of 1m or 15m for monitoring. |
 
 ## Examples
 
@@ -64,5 +64,20 @@ Invoke-IcingaCheckHyperVOverCommitment -Verbosity 2
 ### Example Output 1
 
 ```powershell
-[OK] Check package "Hyper-V Overcommitment" (Match All)\_ [OK] Check package "CPUOverCommit" (Match All)\_ [OK] hyper-v-01 Used Cores: 46c\_ [OK] hyper-v-01 Used Percent: 91.67%\_ [OK] Check package "RAMOverCommit" (Match All)\_ [OK] hyper-v-01 Used Bytes: 45056B\_ [OK] hyper-v-01 Used Percent: 0%\_ [OK] Check package "StorageOverCommit" (Match All)\_ [OK] Check package "Partition C: Overcommitment" (Match All)\_ [OK] C: Used Bytes: 140486311936B\_ [OK] C: Used Percent: 0%\_ [OK] Check package "Partition I: Overcommitment" (Match All)\_ [OK] I: Used Bytes: 9979156899840B\_ [OK] I: Used Percent: 353.8%| 'hyperv01_used_cores'=46c;;;0;24 'hyperv01_used_percent'=91.67%;;;0;100 'hyperv01_used_bytes'=45056B;;;0;60100288512 'hyperv01_used_percent'=0%;;;0;100 'i_used_bytes'=9979156899840B;;;0;2199021158400 'i_used_percent'=353.8%;;;0;100 'c_used_percent'=0%;;;0;100 'c_used_bytes'=140486311936B;;;0;4789643509760
+[OK] Check package "Hyper-V Overcommitment" (Match All)
+\_ [OK] Check package "CPUOverCommit" (Match All)
+    \_ [OK] hyper-v-01 Used Cores: 46c
+    \_ [OK] hyper-v-01 Used Percent: 91.67%
+\_ [OK] Check package "RAMOverCommit" (Match All)
+    \_ [OK] hyper-v-01 Used Bytes: 45056B
+    \_ [OK] hyper-v-01 Used Percent: 0%
+\_ [OK] Check package "StorageOverCommit" (Match All)
+    \_ [OK] Check package "Partition C: Overcommitment" (Match All)
+        \_ [OK] C: Used Bytes: 140486311936B
+        \_ [OK] C: Used Percent: 0%
+\_ [OK] Check package "Partition I: Overcommitment" (Match All)
+        \_ [OK] I: Used Bytes: 9979156899840B
+        \_ [OK] I: Used Percent: 353.8%
+| 'hyperv01_used_cores'=46c;;;0;24 'hyperv01_used_percent'=91.67%;;;0;100 'hyperv01_used_bytes'=45056B;;;0;60100288512 'hyperv01_used_percent'=0%;;;0;100 'i_used_bytes'=9979156899840B;;;0;2199021158400 'i_used_percent'=353.8%;;;0;100 'c_used_percent'=0%;;;0;100 'c_used_bytes'=140486311936B;;;0;478964350976
+0    
 ```
