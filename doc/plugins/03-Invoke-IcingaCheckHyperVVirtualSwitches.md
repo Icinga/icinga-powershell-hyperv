@@ -37,7 +37,7 @@ To execute this plugin you will require to grant the following user permissions.
 | AvoidEmptyCheck | SwitchParameter | false | False | Overrides the default behaviour of the plugin in case no virtual switch is present on the system. Instead of returning `Unknown` the plugin will return `Ok` instead if this argument is set. |
 | NoPerfData | SwitchParameter | false | False | Disables the performance data output of this plugin |
 | Verbosity | Object | false | 0 | Changes the behavior of the plugin output which check states are printed: 0 (default): Only service checks/packages with state not OK will be printed 1: Only services with not OK will be printed including OK checks of affected check packages including Package config 2: Everything will be printed regardless of the check state 3: Identical to Verbose 2, but prints in addition the check package configuration e.g (All must be [OK]) |
-| ThresholdInterval | Object |  |  | Change the value your defined threshold checks against from the current value to a collected time threshold of the Icinga for Windows daemon, as described [here](https://icinga.com/docs/icinga-for-windows/latest/doc/service/10-Register-Service-Checks/). An example for this argument would be 1m or 15m which will use the average of 1m or 15m for monitoring. |
+| ThresholdInterval | String |  |  | Change the value your defined threshold checks against from the current value to a collected time threshold of the Icinga for Windows daemon, as described [here](https://icinga.com/docs/icinga-for-windows/latest/doc/service/10-Register-Service-Checks/). An example for this argument would be 1m or 15m which will use the average of 1m or 15m for monitoring. |
 
 ## Examples
 
@@ -50,5 +50,22 @@ Invoke-IcingaCheckHyperVVirtualSwitches -Verbosity 2
 ### Example Output 1
 
 ```powershell
-[OK] Check package "Virtual Switches" (Match All)\_ [OK] Check package "Internal Switch" (Match All)\_ [OK] Internal Switch HealthState: OK\_ [OK] Internal Switch Status: OK\_ [OK] Check package "Internal Switch1" (Match All)\_ [OK] Internal Switch1 HealthState: OK\_ [OK] Internal Switch1 Status: OK\_ [OK] Check package "net-hq" (Match All)\_ [OK] net-hq HealthState: OK\_ [OK] net-hq Status: OK\_ [OK] Check package "net-private-test" (Match All)\_ [OK] net-private-test HealthState: OK\_ [OK] net-private-test Status: OK\_ [OK] Check package "sales-demo" (Match All)\_ [OK] sales-demo HealthState: OK\_ [OK] sales-demo Status: OK| 'netprivatetest_healthstate'=5;;25 'salesdemo_healthstate'=5;;25 'nethq_healthstate'=5;;25 'internal_switch_healthstate'=5;;25 'internal_switch1_healthstate'=5;;250
+[OK] Check package "Virtual Switches" (Match All)
+\_ [OK] Check package "Internal Switch" (Match All)
+    \_ [OK] Internal Switch HealthState: OK
+    \_ [OK] Internal Switch Status: OK
+\_ [OK] Check package "Internal Switch1" (Match All)
+    \_ [OK] Internal Switch1 HealthState: OK
+    \_ [OK] Internal Switch1 Status: OK
+\_ [OK] Check package "net-hq" (Match All)
+    \_ [OK] net-hq HealthState: OK
+    \_ [OK] net-hq Status: OK
+\_ [OK] Check package "net-private-test" (Match All)
+    \_ [OK] net-private-test HealthState: OK
+    \_ [OK] net-private-test Status: OK
+\_ [OK] Check package "sales-demo" (Match All)
+    \_ [OK] sales-demo HealthState: OK
+    \_ [OK] sales-demo Status: OK
+| 'netprivatetest_healthstate'=5;;25 'salesdemo_healthstate'=5;;25 'nethq_healthstate'=5;;25 'internal_switch_healthstate'=5;;25 'internal_switch1_healthstate'=5;;25
+0    
 ```

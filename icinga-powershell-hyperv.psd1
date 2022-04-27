@@ -7,25 +7,24 @@
     Description       = 'A collection of Hyper-V plugins, which serve to monitor Hyper-V systems'
     PowerShellVersion = '4.0'
     RequiredModules   = @(
-        @{ModuleName = 'icinga-powershell-framework'; ModuleVersion = '1.8.0' },
+        @{ModuleName = 'icinga-powershell-framework'; ModuleVersion = '1.9.0' },
         @{ModuleName = 'icinga-powershell-plugins'; ModuleVersion = '1.5.0' }
     )
     NestedModules     = @(
-        '.\plugins\Invoke-IcingaCheckHyperVHealth.psm1',
-        '.\plugins\Invoke-IcingaCheckHyperVOverCommitment.psm1',
-        '.\plugins\Invoke-IcingaCheckHyperVSnapshot.psm1',
-        '.\plugins\Invoke-IcingaCheckHyperVVirtualSwitches.psm1',
-        '.\plugins\Invoke-IcingaCheckHyperVVMHealth.psm1',
-        '.\provider\enums\Icinga_HypervProviderEnums.psm1',
-        '.\provider\hyperv\Get-IcingaHypervHostInfo.psm1',
-        '.\provider\hyperv\Test-IcingaHyperVInstalled.psm1',
-        '.\provider\vcomputer\Get-IcingaHypervVirtualSwitches.psm1',
-        '.\provider\vcomputer\Get-IcingaVirtualComputerInfo.psm1'
+        '.\compiled\icinga-powershell-hyperv.ifw_compilation.psm1'
     )
-    FunctionsToExport = @('*')
-    CmdletsToExport   = @('*')
-    VariablesToExport = '*'
-    AliasesToExport   = @()
+    FunctionsToExport = @(
+        'Invoke-IcingaCheckHyperVHealth',
+        'Invoke-IcingaCheckHyperVOverCommitment',
+        'Invoke-IcingaCheckHyperVSnapshot',
+        'Invoke-IcingaCheckHyperVVirtualSwitches',
+        'Invoke-IcingaCheckHyperVVMHealth'
+    )
+    CmdletsToExport   = @(
+    )
+    VariablesToExport = @(
+        'HypervProviderEnums'
+    )
     PrivateData       = @{
         PSData   = @{
             Tags         = @('icinga', 'icinga2', 'icingawindows', 'hyper-v', 'hyperv', 'hypervplugins', 'windowsplugins', 'icingaforwindows')
