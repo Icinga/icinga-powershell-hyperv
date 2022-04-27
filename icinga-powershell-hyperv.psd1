@@ -13,16 +13,17 @@
     NestedModules     = @(
         '.\compiled\icinga-powershell-hyperv.ifw_compilation.psm1'
     )
-    FunctionsToExport = @(
+    FunctionsToExport     = @(
+        'Import-IcingaPowerShellComponentHyperV',
         'Invoke-IcingaCheckHyperVHealth',
         'Invoke-IcingaCheckHyperVOverCommitment',
         'Invoke-IcingaCheckHyperVSnapshot',
         'Invoke-IcingaCheckHyperVVirtualSwitches',
         'Invoke-IcingaCheckHyperVVMHealth'
     )
-    CmdletsToExport   = @(
+    CmdletsToExport     = @(
     )
-    VariablesToExport = @(
+    VariablesToExport     = @(
         'HypervProviderEnums'
     )
     PrivateData       = @{
