@@ -8,6 +8,12 @@
     and respond to possible error states
 .PARAMETER Hostname
     The VMM host to check against
+.PARAMETER Username
+    Allows to specify a username to run this check with specific user credentials.
+    This is optional.
+.PARAMETER Password
+    The password used to authenticate the specified user for the `Username` argument.
+    Empty passwords are not supported.
 .PARAMETER IncludeHost
     List of hosts to be included within the check output for checking
 .PARAMETER ExcludeHost
@@ -35,6 +41,8 @@ function Invoke-IcingaCheckHyperVVMM()
 {
     param (
         [string]$Hostname        = '',
+        [string]$Username        = '',
+        [SecureString]$Password  = $null,
         [array]$IncludeHost      = @(),
         [array]$ExcludeHost      = @(),
         [ValidateSet('Unknown', 'NotResponding', 'Reassociating', 'Removing', 'Updating', 'Pending', 'MaintenanceMode', 'NeedsAttention', 'Ok', 'Limited')]
@@ -44,7 +52,7 @@ function Invoke-IcingaCheckHyperVVMM()
         $Verbosity               = 0
     );
 
-    $VMMList      = Get-IcingaHyperVVMMState -Hostname $Hostname -IncludeHost $IncludeHost -ExcludeHost $ExcludeHost;
+    $VMMList      = Get-IcingaHyperVVMMState -Hostname $Hostname -IncludeHost $IncludeHost -ExcludeHost $ExcludeHost -Username $Username -Password $Password;
     $CheckPackage = New-IcingaCheckPackage -Name 'VMM Overview' -Verbose $Verbosity -OperatorAnd -AddSummaryHeader -IgnoreEmptyPackage:$AvoidEmptyCheck;
 
     foreach ($VMMHost in $VMMList.Keys) {

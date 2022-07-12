@@ -19,6 +19,8 @@ No special permissions required.
 | Argument | Type | Required | Default | Description |
 | ---      | ---  | ---      | ---     | ---         |
 | Hostname | String | false |  | The VMM host to check against |
+| Username | String | false |  | Allows to specify a username to run this check with specific user credentials. This is optional. |
+| Password | SecureString | false |  | The password used to authenticate the specified user for the `Username` argument. Empty passwords are not supported. |
 | IncludeHost | Array | false | @() | List of hosts to be included within the check output for checking |
 | ExcludeHost | Array | false | @() | List of hosts to be excluded from the check output for checking |
 | VMMState | Array | false | @() | A list of states which will return `Ok` if being present. States not inside the list will return `Critical` |
