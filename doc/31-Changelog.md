@@ -7,6 +7,14 @@ documentation before upgrading to a new release.
 
 Released closed milestones can be found on [GitHub](https://github.com/Icinga/icinga-powershell-hyperv/milestones?state=closed).
 
+## 1.2.0 (2022-08-09)
+
+[Issue and PRs](https://github.com/Icinga/icinga-powershell-hyperv/milestone/3?closed=1)
+
+### Enhancements
+
+* [#60](https://github.com/Icinga/icinga-powershell-hyperv/issues/60) Adds support for providing a different `Username` and `Password` for `Invoke-IcingaCheckHyperVVMM`, to run the check as different user
+
 ## 1.1.0 (2022-05-03)
 
 [Issue and PRs](https://github.com/Icinga/icinga-powershell-hyperv/milestone/2?closed=1)

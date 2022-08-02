@@ -2,14 +2,28 @@ function Get-IcingaHyperVVMMState()
 {
     param (
         [string]$Hostname,
-        [array]$IncludeHost = @(),
-        [array]$ExcludeHost = @()
+        [string]$Username       = '',
+        [SecureString]$Password = $null,
+        [array]$IncludeHost     = @(),
+        [array]$ExcludeHost     = @()
     );
 
     [hashtable]$VMMRetValue = @{ };
 
     if ([string]::IsNullOrEmpty($Hostname)) {
         Exit-IcingaThrowException -ExceptionType 'Custom' -CustomMessage 'VMM Host not specified' -InputString 'You have to specify a hostname to check the VMM state for.' -Force;
+
+        return $VMMRetValue;
+    }
+
+    if ([string]::IsNullOrEmpty($Username) -eq $FALSE -And $null -eq $Password) {
+        Exit-IcingaThrowException -ExceptionType 'Custom' -CustomMessage 'Username without password specified' -InputString 'You have to specify the user password for running this check as different user.' -Force;
+
+        return $VMMRetValue;
+    }
+
+    if ([string]::IsNullOrEmpty($Username) -And $null -ne $Password) {
+        Exit-IcingaThrowException -ExceptionType 'Custom' -CustomMessage 'Password without user specified' -InputString 'You have to specify the Username for running this check as different user.' -Force;
 
         return $VMMRetValue;
     }
@@ -21,6 +35,12 @@ function Get-IcingaHyperVVMMState()
     }
 
     try {
+        # In case we specify Username and Password, authenticate against the VMM with those credentials
+        if ([string]::IsNullOrEmpty($Username) -eq $FALSE -And $null -ne $Password) {
+            $Credentials = New-Object System.Management.Automation.PSCredential ($Username, $Password);
+
+            Get-SCVMMServer -Credential $Credentials -ComputerName $Hostname -ErrorAction Stop | Out-Null;
+        }
         $VMMStatus = Get-SCVMHost -VMMServer $Hostname -ErrorAction Stop | Select-Object 'ComputerName', 'OverallState';
     } catch {
         Exit-IcingaThrowException -ExceptionType 'Custom' -CustomMessage 'VMM fetch error' -InputString $_.Exception.Message -Force;
