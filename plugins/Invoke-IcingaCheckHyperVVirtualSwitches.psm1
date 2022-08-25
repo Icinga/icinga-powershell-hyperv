@@ -122,7 +122,9 @@ function Invoke-IcingaCheckHyperVVirtualSwitches()
                 New-IcingaCheck `
                     -Name ([string]::Format('{0} HealthState', $CheckPackageName)) `
                     -Value $VirtualSwitch.HealthState `
-                    -Translation $HypervProviderEnums.VMHealthState
+                    -Translation $HypervProviderEnums.VMHealthState `
+                    -MetricIndex $CheckPackageName `
+                    -MetricName 'health'
             ).CritIfNotMatch(
                 $HypervProviderEnums.VMHealthStateName.OK
             )

@@ -73,7 +73,9 @@ function Invoke-IcingaCheckHyperVHealth()
         $Check = New-IcingaCheck `
             -Name ([string]::Format('{0} Status', $Service)) `
             -Value $HypervService.configuration.Status.raw `
-            -Translation $ProviderEnums.ServiceStatusName;
+            -Translation $ProviderEnums.ServiceStatusName `
+            -MetricIndex $Service `
+            -MetricName 'state';
 
         if (([string]::IsNullOrEmpty($HypervService.configuration.ExitCode) -eq $FALSE) -And ($HypervService.configuration.ExitCode -ne 0) -And ($HypervService.configuration.Status.raw -ne $ProviderEnums.ServiceStatus.Running)) {
             $Check.CritIfNotMatch($ProviderEnums.ServiceStatus.Running) | Out-Null;

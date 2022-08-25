@@ -165,7 +165,8 @@ function Invoke-IcingaCheckHyperVSnapshot()
         foreach ($snapshot in $virtualMachine.Snapshots.List) {
             [string]$SnapshotName = $snapshot.ElementName;
             $SnapshotName         = $SnapshotName.Split(' ')[0];
-            $SnapshotCheckPackage = New-IcingaCheckPackage -Name ([string]::Format('{0} {1}', $SnapshotName, $snapshot.CreationTime)) -OperatorAnd -Verbose $Verbosity;
+            $SnapshotId           = [string]::Format('{0} {1}', $SnapshotName, $snapshot.CreationTime);
+            $SnapshotCheckPackage = New-IcingaCheckPackage -Name $SnapshotId -OperatorAnd -Verbose $Verbosity;
             $SnapshotCheckPackage.AddCheck(
                 (
                     New-IcingaCheck `
@@ -202,14 +203,17 @@ function Invoke-IcingaCheckHyperVSnapshot()
         }
 
         foreach ($part in $virtualMachine.Snapshots.Info.Keys) {
-            $Partition      = $virtualMachine.Snapshots.Info[$part];
-            $SnapshotsCount = $virtualMachine.Snapshots.List.Length;
+            $Partition       = $virtualMachine.Snapshots.Info[$part];
+            $SnapshotsCount  = $virtualMachine.Snapshots.List.Length;
             $SnapshotMainCheck.AddCheck(
                 (
                     New-IcingaCheck `
                         -Name ([string]::Format('{0} {1} Count', $virtualMachine.ElementName, $part)) `
                         -Value $SnapshotsCount `
-                        -Unit 'c'
+                        -Unit 'c' `
+                        -MetricIndex $virtualMachine.ElementName `
+                        -MetricName 'count' `
+                        -MetricTemplate 'hypervsnapshotdata'
                 ).WarnOutOfRange(
                     $CountSnapshotWarning
                 ).CritOutOfRange(
@@ -223,7 +227,10 @@ function Invoke-IcingaCheckHyperVSnapshot()
                         -Name ([string]::Format('{0} {1} Total Snapshot Size', $virtualMachine.ElementName, $part)) `
                         -Value $Partition.TotalUsed `
                         -BaseValue $virtualMachine.CurrentUsage `
-                        -Unit 'B'
+                        -Unit 'B' `
+                        -MetricIndex $virtualMachine.ElementName `
+                        -MetricName 'summary' `
+                        -MetricTemplate 'hypervsnapshotdata'
                 ).WarnOutOfRange(
                     $TotalSnapshotSizeWarning
                 ).CritOutOfRange(
@@ -239,7 +246,10 @@ function Invoke-IcingaCheckHyperVSnapshot()
                     New-IcingaCheck `
                         -Name ([string]::Format('{0} {1} Snapshot count prediction', $virtualMachine.ElementName, $part)) `
                         -Value $CalculateTotalSnapshots `
-                        -Unit 'c'
+                        -Unit 'c' `
+                        -MetricIndex $virtualMachine.ElementName `
+                        -MetricName 'prediction' `
+                        -MetricTemplate 'hypervsnapshotdata'
                 ).WarnOutOfRange(
                     $SnapshotSizePredictionWarning
                 ).CritOutOfRange(
@@ -254,7 +264,10 @@ function Invoke-IcingaCheckHyperVSnapshot()
                 New-IcingaCheck `
                     -Name ([string]::Format('{0}: Latest Snapshot Creation Delta', $virtualMachine.ElementName)) `
                     -Value (Compare-IcingaUnixTimeWithDateTime -DateTime $virtualMachine.Snapshots.Latest.CreationTime) `
-                    -Unit 's'
+                    -Unit 's' `
+                    -MetricIndex $virtualMachine.ElementName `
+                    -MetricName 'created' `
+                    -MetricTemplate 'hypervsnapshotvm'
             ).WarnOutOfRange(
                 $CreationTimeWarning
             ).CritOutOfRange(
