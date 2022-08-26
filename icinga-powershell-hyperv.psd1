@@ -7,8 +7,8 @@
     Description       = 'A collection of Hyper-V plugins, which serve to monitor Hyper-V systems'
     PowerShellVersion = '4.0'
     RequiredModules   = @(
-        @{ModuleName = 'icinga-powershell-framework'; ModuleVersion = '1.9.0' },
-        @{ModuleName = 'icinga-powershell-plugins'; ModuleVersion = '1.5.0' }
+        @{ModuleName = 'icinga-powershell-framework'; ModuleVersion = '1.10.0' },
+        @{ModuleName = 'icinga-powershell-plugins'; ModuleVersion = '1.10.0' }
     )
     NestedModules     = @(
         '.\compiled\icinga-powershell-hyperv.ifw_compilation.psm1'
@@ -42,4 +42,3 @@
     }
     HelpInfoURI       = 'https://github.com/Icinga/icinga-powershell-hyperv'
 }
-
