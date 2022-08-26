@@ -77,7 +77,8 @@ function Invoke-IcingaCheckHyperVHealth()
             -MetricIndex $Service `
             -MetricName 'state';
 
-        if (([string]::IsNullOrEmpty($HypervService.configuration.ExitCode) -eq $FALSE) -And ($HypervService.configuration.ExitCode -ne 0) -And ($HypervService.configuration.Status.raw -ne $ProviderEnums.ServiceStatus.Running)) {
+        # Ensure exit code 1077 is ignored, as this means the service was never started: https://docs.microsoft.com/en-us/windows/win32/debug/system-error-codes--1000-1299-
+        if (([string]::IsNullOrEmpty($HypervService.configuration.ExitCode) -eq $FALSE) -And ($HypervService.configuration.ExitCode -ne 0 -And $HypervService.configuration.ExitCode -ne 1077) -And ($HypervService.configuration.Status.raw -ne $ProviderEnums.ServiceStatus.Running)) {
             $Check.CritIfNotMatch($ProviderEnums.ServiceStatus.Running) | Out-Null;
         } elseif (($Service -eq 'vmcompute' -Or $Service -eq 'vmms') -And ($HypervService.configuration.Status.raw -ne $ProviderEnums.ServiceStatus.Running)) {
             $Check.CritIfNotMatch($ProviderEnums.ServiceStatus.Running) | Out-Null;

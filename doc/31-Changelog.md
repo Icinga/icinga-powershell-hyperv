@@ -11,6 +11,10 @@ Released closed milestones can be found on [GitHub](https://github.com/Icinga/ic
 
 [Issue and PRs](https://github.com/Icinga/icinga-powershell-hyperv/milestone/3?closed=1)
 
+### Bugfixes
+
+* [#64](https://github.com/Icinga/icinga-powershell-hyperv/issues/64) Fixes Hyper-V Health plugin always reporting critical because of service exit code `1077`, which simply means this service was never started on the host before and can safely be ignored
+
 ### Enhancements
 
 * [#60](https://github.com/Icinga/icinga-powershell-hyperv/issues/60) Adds support for providing a different `Username` and `Password` for `Invoke-IcingaCheckHyperVVMM`, to run the check as different user
