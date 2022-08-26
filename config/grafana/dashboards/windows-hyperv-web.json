@@ -1,654 +1,654 @@
 {
-    "annotations": {
-      "list": [
-        {
-          "builtIn": 1,
-          "datasource": {
-            "type": "grafana",
-            "uid": "-- Grafana --"
-          },
-          "enable": true,
-          "hide": true,
-          "iconColor": "rgba(0, 211, 255, 1)",
-          "name": "Annotations & Alerts",
-          "target": {
-            "limit": 100,
-            "matchAny": false,
-            "tags": [],
-            "type": "dashboard"
-          },
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
           "type": "dashboard"
-        }
-      ]
-    },
-    "description": "Default Icinga for Windows Hyper-V dashboard, providing generic information for Hyper-V plugins for Icinga Web",
-    "editable": true,
-    "fiscalYearStartMonth": 0,
-    "graphTooltip": 0,
-    "id": 25,
-    "links": [],
-    "liveNow": false,
-    "panels": [
-      {
-        "datasource": {
-          "type": "influxdb",
-          "uid": "${influxdbdatasource}"
         },
-        "description": "",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [
-              {
-                "options": {
-                  "1": {
-                    "color": "red",
-                    "index": 0,
-                    "text": "Stopped"
-                  },
-                  "2": {
-                    "color": "super-light-green",
-                    "index": 1,
-                    "text": "Start Pending"
-                  },
-                  "3": {
-                    "color": "super-light-red",
-                    "index": 2,
-                    "text": "Stop Pending"
-                  },
-                  "4": {
-                    "color": "green",
-                    "index": 3,
-                    "text": "Running"
-                  },
-                  "5": {
-                    "color": "light-green",
-                    "index": 4,
-                    "text": "Continue Pending"
-                  },
-                  "6": {
-                    "color": "super-light-yellow",
-                    "index": 5,
-                    "text": "Pause Pending"
-                  },
-                  "7": {
-                    "color": "light-yellow",
-                    "index": 6,
-                    "text": "Paused"
-                  }
-                },
-                "type": "value"
-              }
-            ],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                },
-                {
-                  "color": "red",
-                  "value": 80
-                }
-              ]
-            }
-          },
-          "overrides": [
-            {
-              "matcher": {
-                "id": "byFrameRefID",
-                "options": "Services"
-              },
-              "properties": [
-                {
-                  "id": "mappings",
-                  "value": [
-                    {
-                      "options": {
-                        "1": {
-                          "index": 0,
-                          "text": "Stopped"
-                        },
-                        "2": {
-                          "index": 1,
-                          "text": "Start Pending"
-                        },
-                        "3": {
-                          "index": 2,
-                          "text": "Stop Pending"
-                        },
-                        "4": {
-                          "index": 3,
-                          "text": "Running"
-                        },
-                        "5": {
-                          "index": 4,
-                          "text": "Continue Pending"
-                        },
-                        "6": {
-                          "index": 5,
-                          "text": "Pause Pending"
-                        },
-                        "7": {
-                          "index": 6,
-                          "text": "Paused"
-                        }
-                      },
-                      "type": "value"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        "gridPos": {
-          "h": 7,
-          "w": 8,
-          "x": 0,
-          "y": 0
-        },
-        "id": 1,
-        "options": {
-          "colorMode": "value",
-          "graphMode": "none",
-          "justifyMode": "auto",
-          "orientation": "horizontal",
-          "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
-            "fields": "",
-            "values": false
-          },
-          "text": {},
-          "textMode": "auto"
-        },
-        "pluginVersion": "9.0.6",
-        "repeatDirection": "h",
-        "targets": [
-          {
-            "datasource": {
-              "type": "influxdb",
-              "uid": "${influxdbdatasource}"
-            },
-            "query": "from(bucket: \"${influxbucket}\")\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r._field == \"value\" and\r\n    r.hostname == \"${hostname}\" and\r\n    r.metric == \"vmms::ifw_hypervhealth::state\" and\r\n    r.service == \"${service}\"\r\n  )\r\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field: \"VMMS State\" }))",
-            "refId": "VMMS State"
-          },
-          {
-            "datasource": {
-              "type": "influxdb",
-              "uid": "${influxdbdatasource}"
-            },
-            "hide": false,
-            "query": "from(bucket: \"${influxbucket}\")\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r._field == \"value\" and\r\n    r.hostname == \"${hostname}\" and\r\n    r.metric == \"vmcompute::ifw_hypervhealth::state\" and\r\n    r.service == \"${service}\"\r\n  )\r\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field: \"VM Compute State\" }))",
-            "refId": "VMCompute State"
-          }
-        ],
-        "title": "${hostname} Health",
-        "transformations": [],
-        "type": "stat"
-      },
-      {
-        "datasource": {
-          "type": "influxdb",
-          "uid": "${influxdbdatasource}"
-        },
-        "description": "",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [],
-            "noValue": "0",
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                }
-              ]
-            },
-            "unit": "percent"
-          },
-          "overrides": [
-            {
-              "matcher": {
-                "id": "byFrameRefID",
-                "options": "OC Percent"
-              },
-              "properties": [
-                {
-                  "id": "unit",
-                  "value": "percent"
-                }
-              ]
-            }
-          ]
-        },
-        "gridPos": {
-          "h": 7,
-          "w": 8,
-          "x": 8,
-          "y": 0
-        },
-        "id": 2,
-        "options": {
-          "orientation": "auto",
-          "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
-            "fields": "",
-            "values": false
-          },
-          "showThresholdLabels": false,
-          "showThresholdMarkers": true,
-          "text": {}
-        },
-        "pluginVersion": "9.0.6",
-        "targets": [
-          {
-            "datasource": {
-              "type": "influxdb",
-              "uid": "${influxdbdatasource}"
-            },
-            "hide": false,
-            "query": "from(bucket: \"${influxbucket}\")\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r.hostname == \"${hostname}\" and\r\n    (r._field == \"value\" or r._field == \"max\" or r._field == \"min\" or r._field == \"warn\" or r._field == \"crit\") and\r\n    r.metric == \"cores::ifw_hypervovercommitcores::usedpercent\"\r\n  )\r\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field: r.metric }))",
-            "refId": "CPU OC Percent"
-          },
-          {
-            "datasource": {
-              "type": "influxdb",
-              "uid": "${influxdbdatasource}"
-            },
-            "hide": false,
-            "query": "from(bucket: \"${influxbucket}\")\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r.hostname == \"${hostname}\" and\r\n    (r._field == \"value\" or r._field == \"max\" or r._field == \"min\" or r._field == \"warn\" or r._field == \"crit\") and\r\n    r.metric == \"memory::ifw_hypervovercommitmemory::usedpercent\"\r\n  )\r\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field: r.metric }))",
-            "refId": "Memory OC Percent"
-          },
-          {
-            "datasource": {
-              "type": "influxdb",
-              "uid": "${influxdbdatasource}"
-            },
-            "hide": false,
-            "query": "from(bucket: \"${influxbucket}\")\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r.hostname == \"${hostname}\" and\r\n    (r._field == \"value\" or r._field == \"max\" or r._field == \"min\" or r._field == \"warn\" or r._field == \"crit\") and\r\n    r.metric =~ /::ifw_hypervovercommitstorage::usedpercent\\b/\r\n  )\r\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field: r.metric }))",
-            "refId": "Storage OC Percent"
-          }
-        ],
-        "title": "${hostname} Overcommittment",
-        "transformations": [
-          {
-            "id": "renameByRegex",
-            "options": {
-              "regex": "cores::ifw_hypervovercommitcores::usedpercent",
-              "renamePattern": "CPU OC %"
-            }
-          },
-          {
-            "id": "renameByRegex",
-            "options": {
-              "regex": "memory::ifw_hypervovercommitmemory::usedpercent",
-              "renamePattern": "Memory OC in %"
-            }
-          },
-          {
-            "id": "renameByRegex",
-            "options": {
-              "regex": "/::ifw_hypervovercommitstorage::usedpercent/",
-              "renamePattern": " Partition OC %"
-            }
-          }
-        ],
-        "type": "gauge"
-      },
-      {
-        "datasource": {
-          "type": "influxdb",
-          "uid": "${influxdbdatasource}"
-        },
-        "description": "",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [],
-            "noValue": "0",
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                }
-              ]
-            },
-            "unit": "bytes"
-          },
-          "overrides": [
-            {
-              "matcher": {
-                "id": "byFrameRefID",
-                "options": "Total Snapshot Size"
-              },
-              "properties": [
-                {
-                  "id": "unit",
-                  "value": "bytes"
-                },
-                {
-                  "id": "displayName",
-                  "value": "Total Snapshot Size"
-                }
-              ]
-            },
-            {
-              "matcher": {
-                "id": "byFrameRefID",
-                "options": "Total Snapshot Count"
-              },
-              "properties": [
-                {
-                  "id": "unit",
-                  "value": "none"
-                },
-                {
-                  "id": "displayName",
-                  "value": "Total Snapshot Count"
-                }
-              ]
-            },
-            {
-              "matcher": {
-                "id": "byFrameRefID",
-                "options": "Snapshotted VMs"
-              },
-              "properties": [
-                {
-                  "id": "unit",
-                  "value": "none"
-                },
-                {
-                  "id": "displayName",
-                  "value": "Snapshotted VMs"
-                }
-              ]
-            }
-          ]
-        },
-        "gridPos": {
-          "h": 7,
-          "w": 8,
-          "x": 16,
-          "y": 0
-        },
-        "id": 3,
-        "options": {
-          "colorMode": "value",
-          "graphMode": "none",
-          "justifyMode": "auto",
-          "orientation": "horizontal",
-          "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
-            "fields": "",
-            "values": false
-          },
-          "text": {},
-          "textMode": "auto"
-        },
-        "pluginVersion": "9.0.6",
-        "repeatDirection": "h",
-        "targets": [
-          {
-            "datasource": {
-              "type": "influxdb",
-              "uid": "${influxdbdatasource}"
-            },
-            "query": "from(bucket: \"${influxbucket}\")\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r._field == \"value\" and\r\n    r.hostname == \"${hostname}\" and\r\n    r.metric =~ /::ifw_hypervsnapshotdata::summary\\b/ and\r\n    r.service == \"${service}\"\r\n  )\r\n  |> unique(column: \"metric\")\r\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field: \"Total Snapshot Size\" }))\r\n  |> sum()",
-            "refId": "Total Snapshot Size"
-          },
-          {
-            "datasource": {
-              "type": "influxdb",
-              "uid": "${influxdbdatasource}"
-            },
-            "hide": false,
-            "query": "from(bucket: \"${influxbucket}\")\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r._field == \"value\" and\r\n    r.hostname == \"${hostname}\" and\r\n    r.metric =~ /::ifw_hypervsnapshotdata::count\\b/ and\r\n    r.service == \"${service}\"\r\n  )\r\n  |> unique(column: \"metric\")\r\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field: \"Total Snapshot Count\" }))\r\n  |> sum()",
-            "refId": "Total Snapshot Count"
-          },
-          {
-            "datasource": {
-              "type": "influxdb",
-              "uid": "${influxdbdatasource}"
-            },
-            "hide": false,
-            "query": "from(bucket: \"${influxbucket}\")\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r._field == \"value\" and\r\n    r.hostname == \"${hostname}\" and\r\n    r.metric =~ /::ifw_hypervsnapshotdata::count\\b/ and\r\n    r.service == \"${service}\" and\r\n    r._value != 0\r\n  )\r\n  |> unique(column: \"_field\")\r\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field: \"Snapshotted VMs\" }))\r\n  |> count()",
-            "refId": "Snapshotted VMs"
-          }
-        ],
-        "title": "${hostname} Snapshots",
-        "transformations": [],
-        "type": "stat"
-      },
-      {
-        "datasource": {
-          "type": "influxdb",
-          "uid": "${influxdbdatasource}"
-        },
-        "description": "",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [],
-            "noValue": "0",
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                },
-                {
-                  "color": "#EAB839",
-                  "value": 5
-                },
-                {
-                  "color": "red",
-                  "value": 10
-                }
-              ]
-            }
-          },
-          "overrides": []
-        },
-        "gridPos": {
-          "h": 7,
-          "w": 8,
-          "x": 0,
-          "y": 7
-        },
-        "id": 4,
-        "options": {
-          "colorMode": "background",
-          "graphMode": "none",
-          "justifyMode": "auto",
-          "orientation": "horizontal",
-          "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
-            "fields": "",
-            "limit": 100,
-            "values": false
-          },
-          "text": {},
-          "textMode": "auto"
-        },
-        "pluginVersion": "9.0.6",
-        "repeatDirection": "h",
-        "targets": [
-          {
-            "datasource": {
-              "type": "influxdb",
-              "uid": "${influxdbdatasource}"
-            },
-            "query": "from(bucket: \"${influxbucket}\")\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r._field == \"value\" and\r\n    r.hostname == \"${hostname}\" and\r\n    r.metric =~ /::ifw_hypervvmhealth::health\\b/ and\r\n    r.service == \"${service}\" and\r\n    r._value != 5\r\n  )\r\n  |> unique(column: \"_field\")\r\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field: \"Unhealthy VMs\" }))\r\n  |> count()",
-            "refId": "VM Health"
-          }
-        ],
-        "title": "${hostname} Unhealthy VMs",
-        "transformations": [],
-        "type": "stat"
-      },
-      {
-        "datasource": {
-          "type": "influxdb",
-          "uid": "${influxdbdatasource}"
-        },
-        "description": "",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [],
-            "noValue": "0",
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                },
-                {
-                  "color": "#EAB839",
-                  "value": 5
-                },
-                {
-                  "color": "red",
-                  "value": 10
-                }
-              ]
-            }
-          },
-          "overrides": []
-        },
-        "gridPos": {
-          "h": 7,
-          "w": 8,
-          "x": 8,
-          "y": 7
-        },
-        "id": 5,
-        "options": {
-          "colorMode": "background",
-          "graphMode": "none",
-          "justifyMode": "auto",
-          "orientation": "horizontal",
-          "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
-            "fields": "",
-            "limit": 100,
-            "values": false
-          },
-          "text": {},
-          "textMode": "auto"
-        },
-        "pluginVersion": "9.0.6",
-        "repeatDirection": "h",
-        "targets": [
-          {
-            "datasource": {
-              "type": "influxdb",
-              "uid": "${influxdbdatasource}"
-            },
-            "query": "from(bucket: \"${influxbucket}\")\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r._field == \"value\" and\r\n    r.hostname == \"${hostname}\" and\r\n    r.metric =~ /::ifw_hypervvirtualswitches::health\\b/ and\r\n    r.service == \"${service}\" and\r\n    r._value != 5\r\n  )\r\n  |> unique(column: \"_field\")\r\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field: \"Unhealthy Virtual Switches\" }))\r\n  |> count()",
-            "refId": "VM Health"
-          }
-        ],
-        "title": "${hostname} Unhealthy Virtual Switches",
-        "transformations": [],
-        "type": "stat"
+        "type": "dashboard"
       }
-    ],
-    "refresh": false,
-    "schemaVersion": 36,
-    "style": "dark",
-    "tags": [
-      "hyperv",
-      "windows",
-      "flux"
-    ],
-    "templating": {
-      "list": [
-        {
-          "current": {
-            "selected": false,
-            "text": "InfluxDB",
-            "value": "InfluxDB"
+    ]
+  },
+  "description": "Default Icinga for Windows Hyper-V dashboard, providing generic information for Hyper-V plugins for Icinga Web",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 25,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${influxdbdatasource}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
           },
-          "description": "InfluxDB 2 DataSource for Icinga metrics",
-          "hide": 0,
-          "includeAll": false,
-          "label": "InfluxDB DataSource",
-          "multi": false,
-          "name": "influxdbdatasource",
-          "options": [],
-          "query": "influxdb",
-          "refresh": 1,
-          "regex": "",
-          "skipUrlSync": false,
-          "type": "datasource"
+          "mappings": [
+            {
+              "options": {
+                "1": {
+                  "color": "red",
+                  "index": 0,
+                  "text": "Stopped"
+                },
+                "2": {
+                  "color": "super-light-green",
+                  "index": 1,
+                  "text": "Start Pending"
+                },
+                "3": {
+                  "color": "super-light-red",
+                  "index": 2,
+                  "text": "Stop Pending"
+                },
+                "4": {
+                  "color": "green",
+                  "index": 3,
+                  "text": "Running"
+                },
+                "5": {
+                  "color": "light-green",
+                  "index": 4,
+                  "text": "Continue Pending"
+                },
+                "6": {
+                  "color": "super-light-yellow",
+                  "index": 5,
+                  "text": "Pause Pending"
+                },
+                "7": {
+                  "color": "light-yellow",
+                  "index": 6,
+                  "text": "Paused"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "Services"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "1": {
+                        "index": 0,
+                        "text": "Stopped"
+                      },
+                      "2": {
+                        "index": 1,
+                        "text": "Start Pending"
+                      },
+                      "3": {
+                        "index": 2,
+                        "text": "Stop Pending"
+                      },
+                      "4": {
+                        "index": 3,
+                        "text": "Running"
+                      },
+                      "5": {
+                        "index": 4,
+                        "text": "Continue Pending"
+                      },
+                      "6": {
+                        "index": 5,
+                        "text": "Pause Pending"
+                      },
+                      "7": {
+                        "index": 6,
+                        "text": "Paused"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.0.6",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdbdatasource}"
+          },
+          "query": "from(bucket: \"${influxbucket}\")\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r._field == \"value\" and\r\n    r.hostname == \"${hostname}\" and\r\n    r.metric == \"vmms::ifw_hypervhealth::state\" and\r\n    r.service == \"${service}\"\r\n  )\r\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field: \"VMMS State\" }))",
+          "refId": "VMMS State"
         },
         {
-          "description": "Data Bucket for InfluxDB2 for Icinga monitoring data",
-          "hide": 2,
-          "label": "Icinga Data",
-          "name": "influxbucket",
-          "query": "icinga2",
-          "skipUrlSync": false,
-          "type": "constant"
-        },
-        {
-          "description": "The Icinga hostname to display data for",
-          "hide": 2,
-          "label": "Hostname",
-          "name": "hostname",
-          "query": "null",
-          "skipUrlSync": false,
-          "type": "constant"
-        },
-        {
-          "description": "The Icinga service to display data for",
-          "hide": 2,
-          "label": "Service",
-          "name": "service",
-          "query": "null",
-          "skipUrlSync": false,
-          "type": "constant"
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdbdatasource}"
+          },
+          "hide": false,
+          "query": "from(bucket: \"${influxbucket}\")\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r._field == \"value\" and\r\n    r.hostname == \"${hostname}\" and\r\n    r.metric == \"vmcompute::ifw_hypervhealth::state\" and\r\n    r.service == \"${service}\"\r\n  )\r\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field: \"VM Compute State\" }))",
+          "refId": "VMCompute State"
         }
-      ]
+      ],
+      "title": "${hostname} Health",
+      "transformations": [],
+      "type": "stat"
     },
-    "time": {
-      "from": "now-1h",
-      "to": "now"
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${influxdbdatasource}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "OC Percent"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 8,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {}
+      },
+      "pluginVersion": "9.0.6",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdbdatasource}"
+          },
+          "hide": false,
+          "query": "from(bucket: \"${influxbucket}\")\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r.hostname == \"${hostname}\" and\r\n    (r._field == \"value\" or r._field == \"max\" or r._field == \"min\" or r._field == \"warn\" or r._field == \"crit\") and\r\n    r.metric == \"cores::ifw_hypervovercommitcores::usedpercent\" and\r\n    r.service == \"${service}\"\r\n  )\r\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field: r.metric }))",
+          "refId": "CPU OC Percent"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdbdatasource}"
+          },
+          "hide": false,
+          "query": "from(bucket: \"${influxbucket}\")\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r.hostname == \"${hostname}\" and\r\n    (r._field == \"value\" or r._field == \"max\" or r._field == \"min\" or r._field == \"warn\" or r._field == \"crit\") and\r\n    r.metric == \"memory::ifw_hypervovercommitmemory::usedpercent\" and\r\n    r.service == \"${service}\"\r\n  )\r\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field: r.metric }))",
+          "refId": "Memory OC Percent"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdbdatasource}"
+          },
+          "hide": false,
+          "query": "from(bucket: \"${influxbucket}\")\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r.hostname == \"${hostname}\" and\r\n    (r._field == \"value\" or r._field == \"max\" or r._field == \"min\" or r._field == \"warn\" or r._field == \"crit\") and\r\n    r.metric =~ /::ifw_hypervovercommitstorage::usedpercent\\b/ and\r\n    r.service == \"${service}\"\r\n  )\r\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field: r.metric }))",
+          "refId": "Storage OC Percent"
+        }
+      ],
+      "title": "${hostname} Overcommittment",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "cores::ifw_hypervovercommitcores::usedpercent",
+            "renamePattern": "CPU OC %"
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "memory::ifw_hypervovercommitmemory::usedpercent",
+            "renamePattern": "Memory OC in %"
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "/::ifw_hypervovercommitstorage::usedpercent/",
+            "renamePattern": " Partition OC %"
+          }
+        }
+      ],
+      "type": "gauge"
     },
-    "timepicker": {},
-    "timezone": "",
-    "title": "Windows-HyperV-Web",
-    "uid": "7XuID0WVz",
-    "version": 25,
-    "weekStart": ""
-  }
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${influxdbdatasource}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "Total Snapshot Size"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              },
+              {
+                "id": "displayName",
+                "value": "Total Snapshot Size"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "Total Snapshot Count"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              },
+              {
+                "id": "displayName",
+                "value": "Total Snapshot Count"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "Snapshotted VMs"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              },
+              {
+                "id": "displayName",
+                "value": "Snapshotted VMs"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 16,
+        "y": 0
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.0.6",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdbdatasource}"
+          },
+          "query": "from(bucket: \"${influxbucket}\")\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r._field == \"value\" and\r\n    r.hostname == \"${hostname}\" and\r\n    r.metric =~ /::ifw_hypervsnapshotdata::summary\\b/ and\r\n    r.service == \"${service}\"\r\n  )\r\n  |> unique(column: \"metric\")\r\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field: \"Total Snapshot Size\" }))\r\n  |> sum()",
+          "refId": "Total Snapshot Size"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdbdatasource}"
+          },
+          "hide": false,
+          "query": "from(bucket: \"${influxbucket}\")\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r._field == \"value\" and\r\n    r.hostname == \"${hostname}\" and\r\n    r.metric =~ /::ifw_hypervsnapshotdata::count\\b/ and\r\n    r.service == \"${service}\"\r\n  )\r\n  |> unique(column: \"metric\")\r\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field: \"Total Snapshot Count\" }))\r\n  |> sum()",
+          "refId": "Total Snapshot Count"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdbdatasource}"
+          },
+          "hide": false,
+          "query": "from(bucket: \"${influxbucket}\")\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r._field == \"value\" and\r\n    r.hostname == \"${hostname}\" and\r\n    r.metric =~ /::ifw_hypervsnapshotdata::count\\b/ and\r\n    r.service == \"${service}\" and\r\n    r._value != 0\r\n  )\r\n  |> unique(column: \"_field\")\r\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field: \"Snapshotted VMs\" }))\r\n  |> count()",
+          "refId": "Snapshotted VMs"
+        }
+      ],
+      "title": "${hostname} Snapshots",
+      "transformations": [],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${influxdbdatasource}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 5
+              },
+              {
+                "color": "red",
+                "value": 10
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 7
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "limit": 100,
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.0.6",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdbdatasource}"
+          },
+          "query": "from(bucket: \"${influxbucket}\")\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r._field == \"value\" and\r\n    r.hostname == \"${hostname}\" and\r\n    r.metric =~ /::ifw_hypervvmhealth::health\\b/ and\r\n    r.service == \"${service}\" and\r\n    r._value != 5\r\n  )\r\n  |> unique(column: \"_field\")\r\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field: \"Unhealthy VMs\" }))\r\n  |> count()",
+          "refId": "VM Health"
+        }
+      ],
+      "title": "${hostname} Unhealthy VMs",
+      "transformations": [],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "${influxdbdatasource}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 5
+              },
+              {
+                "color": "red",
+                "value": 10
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 8,
+        "y": 7
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "limit": 100,
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.0.6",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "${influxdbdatasource}"
+          },
+          "query": "from(bucket: \"${influxbucket}\")\r\n  |> range(start: v.timeRangeStart, stop:v.timeRangeStop)\r\n  |> filter(fn: (r) =>\r\n    r._field == \"value\" and\r\n    r.hostname == \"${hostname}\" and\r\n    r.metric =~ /::ifw_hypervvirtualswitches::health\\b/ and\r\n    r.service == \"${service}\" and\r\n    r._value != 5\r\n  )\r\n  |> unique(column: \"_field\")\r\n  |> map(fn: (r) => ({ _value:r._value, _time:r._time, _field: \"Unhealthy Virtual Switches\" }))\r\n  |> count()",
+          "refId": "VM Health"
+        }
+      ],
+      "title": "${hostname} Unhealthy Virtual Switches",
+      "transformations": [],
+      "type": "stat"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 36,
+  "style": "dark",
+  "tags": [
+    "hyperv",
+    "windows",
+    "flux"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "InfluxDB",
+          "value": "InfluxDB"
+        },
+        "description": "InfluxDB 2 DataSource for Icinga metrics",
+        "hide": 0,
+        "includeAll": false,
+        "label": "InfluxDB DataSource",
+        "multi": false,
+        "name": "influxdbdatasource",
+        "options": [],
+        "query": "influxdb",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "description": "Data Bucket for InfluxDB2 for Icinga monitoring data",
+        "hide": 2,
+        "label": "Icinga Data",
+        "name": "influxbucket",
+        "query": "icinga2",
+        "skipUrlSync": false,
+        "type": "constant"
+      },
+      {
+        "description": "The Icinga hostname to display data for",
+        "hide": 2,
+        "label": "Hostname",
+        "name": "hostname",
+        "query": "null",
+        "skipUrlSync": false,
+        "type": "constant"
+      },
+      {
+        "description": "The Icinga service to display data for",
+        "hide": 2,
+        "label": "Service",
+        "name": "service",
+        "query": "null",
+        "skipUrlSync": false,
+        "type": "constant"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Windows-HyperV-Web",
+  "uid": "7XuID0WVz",
+  "version": 26,
+  "weekStart": ""
+}
