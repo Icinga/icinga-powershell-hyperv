@@ -19,6 +19,7 @@ Released closed milestones can be found on [GitHub](https://github.com/Icinga/ic
 
 * [#60](https://github.com/Icinga/icinga-powershell-hyperv/issues/60) Adds support for providing a different `Username` and `Password` for `Invoke-IcingaCheckHyperVVMM`, to run the check as different user
 * [#63](https://github.com/Icinga/icinga-powershell-hyperv/pull/63) Updates performance metrics to Icinga for Windows v1.10.0 layout and provides default dashboards for Grafana and Icinga Web
+* [#65](https://github.com/Icinga/icinga-powershell-hyperv/pull/65) Updates config and dependencies for Icinga for Windows v1.10.0
 
 ### Grafana Dashboards
 
