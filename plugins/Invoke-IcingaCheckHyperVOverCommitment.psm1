@@ -124,7 +124,10 @@ function Invoke-IcingaCheckHyperVOverCommitment()
                     -Value $StorageOverCommit.Bytes `
                     -Unit 'B' `
                     -Minimum 0 `
-                    -Maximum $StorageOverCommit.Capacity
+                    -Maximum $StorageOverCommit.Capacity `
+                    -MetricIndex $storage `
+                    -MetricName 'usedbytes' `
+                    -MetricTemplate 'hypervovercommitstorage'
             ).WarnOutOfRange(
                 $StorageOCByteWarn
             ).CritOutOfRange(
@@ -139,7 +142,10 @@ function Invoke-IcingaCheckHyperVOverCommitment()
                     -Value $StorageOverCommit.Percent `
                     -Unit '%' `
                     -Minimum 0 `
-                    -Maximum 100
+                    -Maximum 100 `
+                    -MetricIndex $storage `
+                    -MetricName 'usedpercent' `
+                    -MetricTemplate 'hypervovercommitstorage'
             ).WarnOutOfRange(
                 $StorageOCPercentWarn
             ).CritOutOfRange(
@@ -175,7 +181,10 @@ function Invoke-IcingaCheckHyperVOverCommitment()
                 -Value $HypervServer.Resources.RAMOverCommit.Bytes `
                 -Unit 'B' `
                 -Minimum 0 `
-                -Maximum $HypervServer.Resources.RAMOverCommit.Capacity
+                -Maximum $HypervServer.Resources.RAMOverCommit.Capacity `
+                -MetricIndex 'memory' `
+                -MetricName 'usedbytes' `
+                -MetricTemplate 'hypervovercommitmemory'
         ).WarnOutOfRange(
             $RAMOCByteWarn
         ).CritOutOfRange(
@@ -191,7 +200,10 @@ function Invoke-IcingaCheckHyperVOverCommitment()
                 -Value $HypervServer.Resources.RAMOverCommit.Percent `
                 -Unit '%' `
                 -Minimum 0 `
-                -Maximum 100
+                -Maximum 100 `
+                -MetricIndex 'memory' `
+                -MetricName 'usedpercent' `
+                -MetricTemplate 'hypervovercommitmemory'
         ).WarnOutOfRange(
             $RAMOCPercentWarn
         ).CritOutOfRange(
@@ -212,7 +224,10 @@ function Invoke-IcingaCheckHyperVOverCommitment()
                 -Value $HypervServer.Resources.CPUOverCommit.Cores `
                 -Unit 'c' `
                 -Minimum 0 `
-                -Maximum $HypervServer.Resources.CPUOverCommit.Available
+                -Maximum $HypervServer.Resources.CPUOverCommit.Available `
+                -MetricIndex 'cores' `
+                -MetricName 'usedcores' `
+                -MetricTemplate 'hypervovercommitcores'
         ).WarnOutOfRange(
             $CPUCoreOCWarn
         ).CritOutOfRange(
@@ -228,7 +243,10 @@ function Invoke-IcingaCheckHyperVOverCommitment()
                 -Value $HypervServer.Resources.CPUOverCommit.Percent `
                 -Unit '%' `
                 -Minimum 0 `
-                -Maximum 100
+                -Maximum 100 `
+                -MetricIndex 'cores' `
+                -MetricName 'usedpercent' `
+                -MetricTemplate 'hypervovercommitcores'
         ).WarnOutOfRange(
             $CPUOCPercentWarn
         ).CritOutOfRange(

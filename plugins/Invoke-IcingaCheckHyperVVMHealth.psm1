@@ -121,7 +121,9 @@ function Invoke-IcingaCheckHyperVVMHealth()
             $HeartBeatCheck = New-IcingaCheck `
                 -Name ([string]::Format('{0} Heartbeat', $virtualComputer.ElementName)) `
                 -Value $virtualComputer.Heartbeat `
-                -Translation $HypervProviderEnums.VMHeartbeat;
+                -Translation $HypervProviderEnums.VMHeartbeat `
+                -MetricIndex $virtualComputer.ElementName `
+                -MetricName 'heartbeat';
 
             if ($SkipVMHeartbeat -eq $FALSE) {
                 $HeartBeatCheck.WarnIfMatch(
@@ -139,7 +141,9 @@ function Invoke-IcingaCheckHyperVVMHealth()
         $EnabledStateCheck = New-IcingaCheck `
             -Name ([string]::Format('{0} State', $virtualComputer.ElementName)) `
             -Value $virtualComputer.EnabledState `
-            -Translation $HypervProviderEnums.VMEnabledState;
+            -Translation $HypervProviderEnums.VMEnabledState `
+            -MetricIndex $virtualComputer.ElementName `
+            -MetricName 'state';
 
         if ($NegateVMState) {
             $EnabledStateCheck.CritIfNotMatch($HypervProviderEnums.VMEnabledStateName[[string]$VmEnabledState]) | Out-Null;
@@ -154,7 +158,9 @@ function Invoke-IcingaCheckHyperVVMHealth()
                 New-IcingaCheck `
                     -Name ([string]::Format('{0} HealthState', $virtualComputer.ElementName)) `
                     -Value $virtualComputer.HealthState `
-                    -Translation $HypervProviderEnums.VMHealthState
+                    -Translation $HypervProviderEnums.VMHealthState `
+                    -MetricIndex $virtualComputer.ElementName `
+                    -MetricName 'health'
             ).WarnIfNotMatch(
                 $HypervProviderEnums.VMHealthStateName.OK
             )
@@ -172,7 +178,7 @@ function Invoke-IcingaCheckHyperVVMHealth()
 
             $HiddenCheckPackage.AddCheck(
                 (
-                    New-IcingaCheck -Name $item -Value ($VirtualComputers.Summary[$item])
+                    New-IcingaCheck -Name $item -Value ($VirtualComputers.Summary[$item]) -MetricIndex 'summary' -MetricName $item
                 )
             );
         }
