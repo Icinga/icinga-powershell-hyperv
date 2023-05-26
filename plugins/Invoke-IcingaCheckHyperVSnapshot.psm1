@@ -221,22 +221,28 @@ function Invoke-IcingaCheckHyperVSnapshot()
                 )
             );
 
-            $SnapshotMainCheck.AddCheck(
-                (
-                    New-IcingaCheck `
-                        -Name ([string]::Format('{0} {1} Total Snapshot Size', $virtualMachine.ElementName, $part)) `
-                        -Value $Partition.TotalUsed `
-                        -BaseValue $virtualMachine.CurrentUsage `
-                        -Unit 'B' `
-                        -MetricIndex $virtualMachine.ElementName `
-                        -MetricName 'summary' `
-                        -MetricTemplate 'hypervsnapshotdata'
-                ).WarnOutOfRange(
-                    $TotalSnapshotSizeWarning
-                ).CritOutOfRange(
-                    $TotalSnapshotSizeCritical
-                )
-            );
+            if ([string]::IsNullOrEmpty($virtualMachine.CurrentUsageError)) {
+                $SnapshotMainCheck.AddCheck(
+                    (
+                        New-IcingaCheck `
+                            -Name ([string]::Format('{0} {1} Total Snapshot Size', $virtualMachine.ElementName, $part)) `
+                            -Value $Partition.TotalUsed `
+                            -BaseValue $virtualMachine.CurrentUsage `
+                            -Unit 'B' `
+                            -MetricIndex $virtualMachine.ElementName `
+                            -MetricName 'summary' `
+                            -MetricTemplate 'hypervsnapshotdata'
+                    ).WarnOutOfRange(
+                        $TotalSnapshotSizeWarning
+                    ).CritOutOfRange(
+                        $TotalSnapshotSizeCritical
+                    )
+                );
+            } else {
+                $IcingaCheck = New-IcingaCheck -Name ([string]::Format('Snapshots: {0} for location "{1}" and virtual machine "{2}"', $virtualMachine.CurrentUsageError, $virtualMachine.Partition, $virtualMachine.ElementName)) -NoPerfData;
+                $IcingaCheck.SetUnknown() | Out-Null;
+                $SnapshotMainCheck.AddCheck($IcingaCheck);
+            }
 
             $AverageSnapshotSize     = [System.Math]::Truncate([System.Math]::Round($Partition.TotalUsed / $SnapshotsCount));
             $CalculateTotalSnapshots = [System.Math]::Truncate([System.Math]::Round($Partition.FreeSpace / ([math]::Max($AverageSnapshotSize, 1)), 2));
