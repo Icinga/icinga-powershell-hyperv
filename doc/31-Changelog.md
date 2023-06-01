@@ -7,6 +7,14 @@ documentation before upgrading to a new release.
 
 Released closed milestones can be found on [GitHub](https://github.com/Icinga/icinga-powershell-hyperv/milestones?state=closed).
 
+## 1.3.0 (2023-06-16)
+
+[Issue and PRs](https://github.com/Icinga/icinga-powershell-hyperv/milestone/4?closed=1)
+
+### Bugfixes
+
+* [#67](https://github.com/Icinga/icinga-powershell-hyperv/issues/67) Fixes Hyper-V Snapshot plugin throwing an exception in case vdisks were deleted from disk or removed from the virtual machine object in Hyper-V Manager
+
 ## 1.2.0 (2022-08-30)
 
 [Issue and PRs](https://github.com/Icinga/icinga-powershell-hyperv/milestone/3?closed=1)

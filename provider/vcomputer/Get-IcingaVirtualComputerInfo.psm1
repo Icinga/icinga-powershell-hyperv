@@ -231,12 +231,12 @@ function Get-IcingaVirtualComputerInfo()
                 'Path'                                 = ([string]::Format('{0}{1}{2}', $snapshot.ConfigurationDataRoot, '\', $snapshot.ConfigurationFile));
             };
 
-            if (Test-Path $SnapshotContent.Path -ErrorAction SilentlyContinue) {
-                $SnapshotSize = Get-ChildItem -Path $SnapshotContent.Path | Select-Object Length;
+            try {
+                $SnapshotSize = Get-ChildItem -Path $SnapshotContent.Path -ErrorAction Stop | Select-Object Length;
                 $SnapshotContent.Add('Error', $null);
-            } else {
-                $SnapshotSize = @{ 'Length' = 0};
-                $SnapshotContent.Add('Error', 'PermissionDenied');
+            } catch {
+                $SnapshotSize = @{ 'Length' = 0 };
+                $SnapshotContent.Add('Error', $_.Exception.GetType().Name);
             }
 
             $SnapshotContent.Add('Size', $SnapshotSize.Length);
@@ -284,6 +284,13 @@ function Get-IcingaVirtualComputerInfo()
         # Sort our Snapshots based on the creation Time
         $details.Snapshots.List = $details.Snapshots.List | ConvertTo-IcingaSecureSortedArray -MemberName 'CreationTime' -Descending;
 
+        # Add some base data to prevent the plugin from crashing
+        $details += @{
+            'Partition'         = 'Unassigned';
+            'CurrentUsage'      = 0;
+            'CurrentUsageError' = 'No virtual disk assigned to this virtual machine';
+        };
+
         # We are going to loop through all available vm partitions
         foreach ($vmPartition in $VmPartitionsPath) {
             # We filter out the drive letter where the VMs are stored
@@ -305,12 +312,15 @@ function Get-IcingaVirtualComputerInfo()
                 'AutomaticAllocation'   = $vmPartition.AutomaticAllocation;
                 'AutomaticDeallocation' = $vmPartition.AutomaticDeallocation;
                 'HostResource'          = $vmPartition.HostResource;
-                'Partition'             = $vmPath;
-                'CurrentUsage'          = 'PermissionDenied';
             };
 
-            if (Test-Path -Path ([string]$vmPartition.HostResource)) {
-                $details.CurrentUsage = (Get-Item -Path ([string]$vmPartition.HostResource) | Select-Object Length).Length;
+            $details.Partition         = $vmPath;
+            $details.CurrentUsageError = '';
+
+            try {
+                $details.CurrentUsage = (Get-Item -Path ([string]$vmPartition.HostResource) -ErrorAction Stop | Select-Object Length).Length;
+            } catch {
+                $details.CurrentUsageError = $_.Exception.GetType().Name;
             }
 
             # If the partition doesn't exist in StorageOverCommit hashtable then add ones
@@ -372,7 +382,7 @@ function Get-IcingaVirtualComputerInfo()
                 $VComputerData.Resources.StorageOverCommit[$details.Partition].Bytes += ($details.DiskCapacity);
             }
 
-            if ($details.CurrentUsage -ne 'PermissionDenied') {
+            if ([string]::IsNullOrEmpty($details.CurrentUsageError)) {
                 $CurrentVmsUsage += $details.CurrentUsage;
             } else {
                 $AccessDeniedVms += $vcomputer.ElementName;
