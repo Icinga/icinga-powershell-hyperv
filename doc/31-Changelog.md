@@ -14,6 +14,7 @@ Released closed milestones can be found on [GitHub](https://github.com/Icinga/ic
 ### Bugfixes
 
 * [#67](https://github.com/Icinga/icinga-powershell-hyperv/issues/67) Fixes Hyper-V Snapshot plugin throwing an exception in case vdisks were deleted from disk or removed from the virtual machine object in Hyper-V Manager
+* [#69](https://github.com/Icinga/icinga-powershell-hyperv/issues/69) Fixes a freeze during `Test-IcingaHyperVInstalled` call on some machines, as `Get-WindowsFeature` sometimes takes forever to resolve the feature list
 
 ## 1.2.0 (2022-08-30)
 
