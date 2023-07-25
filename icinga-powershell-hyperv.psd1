@@ -15,6 +15,7 @@
     )
     FunctionsToExport     = @(
         'Import-IcingaPowerShellComponentHyperV',
+        'Invoke-IcingaCheckHyperVDuplicateVM',
         'Invoke-IcingaCheckHyperVHealth',
         'Invoke-IcingaCheckHyperVOverCommitment',
         'Invoke-IcingaCheckHyperVSnapshot',
@@ -42,3 +43,4 @@
     }
     HelpInfoURI       = 'https://github.com/Icinga/icinga-powershell-hyperv'
 }
+

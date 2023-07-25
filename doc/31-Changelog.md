@@ -7,7 +7,7 @@ documentation before upgrading to a new release.
 
 Released closed milestones can be found on [GitHub](https://github.com/Icinga/icinga-powershell-hyperv/milestones?state=closed).
 
-## 1.3.0 (2023-06-16)
+## 1.3.0 (2023-08-01)
 
 [Issue and PRs](https://github.com/Icinga/icinga-powershell-hyperv/milestone/4?closed=1)
 
@@ -15,6 +15,14 @@ Released closed milestones can be found on [GitHub](https://github.com/Icinga/ic
 
 * [#67](https://github.com/Icinga/icinga-powershell-hyperv/issues/67) Fixes Hyper-V Snapshot plugin throwing an exception in case vdisks were deleted from disk or removed from the virtual machine object in Hyper-V Manager
 * [#69](https://github.com/Icinga/icinga-powershell-hyperv/issues/69) Fixes a freeze during `Test-IcingaHyperVInstalled` call on some machines, as `Get-WindowsFeature` sometimes takes forever to resolve the feature list
+
+### Enhancements
+
+* [#70](https://github.com/Icinga/icinga-powershell-hyperv/pull/70) Adds new plugin `Invoke-IcingaCheckHyperVDuplicateVM` to check for duplicate virtual machines on your Hyper-V node or cluster, printing critical for every single virtual machine found with duplicates
+
+#### New Plugin Integrations
+
+* Invoke-IcingaCheckHyperVDuplicateVM
 
 ## 1.2.0 (2022-08-30)
 
