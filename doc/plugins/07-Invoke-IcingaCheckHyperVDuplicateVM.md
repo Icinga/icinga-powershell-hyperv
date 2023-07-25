@@ -1,4 +1,3 @@
-
 # Invoke-IcingaCheckHyperVDuplicateVM
 
 ## Description
@@ -41,3 +40,5 @@ Invoke-IcingaCheckHyperVDuplicateVM -Verbosity 2
 \_ [CRITICAL] VM "vmicinga": 2
 | 'vmicinga::ifw_hypervduplicatevm::duplicate'=2;;    
 ```
+
+

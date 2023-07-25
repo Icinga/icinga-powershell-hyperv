@@ -33,3 +33,4 @@ icinga> icinga { Invoke-IcingaCheckCPU -Warning 20 -Critical 40 -Core _Total -Th
 | [Invoke-IcingaCheckHyperVVirtualSwitches](plugins/03-Invoke-IcingaCheckHyperVVirtualSwitches.md) | Checks the state of a Hyper-V virtual switch |
 | [Invoke-IcingaCheckHyperVVMHealth](plugins/02-Invoke-IcingaCheckHyperVVMHealth.md) | Determines the current state of the Hyper-V virtual machine. |
 | [Invoke-IcingaCheckHyperVVMM](plugins/06-Invoke-IcingaCheckHyperVVMM.md) | Plugin for checking the Virtual Machine Manager (VMM) host to    fetch all hosts assigned to view their status from VMM view |
+

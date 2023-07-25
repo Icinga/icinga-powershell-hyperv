@@ -32,6 +32,10 @@
 .PARAMETER CriticalActiveVms
     Allows to monitor on how many active VM's are currently present and throws a
     warning in case it is within the threshold
+.PARAMETER BlackoutTimesEventDelta
+    Defines a time range (example "-5d") to filter for any BlackoutTime log entries older than the provided time range.
+    In case a warning BlackoutTime is triggered and older than the provided threshold, the value is printed with an "OK" state
+    instead of "WARNING"
 .PARAMETER SkipVMHeartbeat
     Skips the current virtual machine heartbeat status check.
 .PARAMETER VmEnabledState
@@ -85,18 +89,19 @@
 function Invoke-IcingaCheckHyperVVMHealth()
 {
     param (
-        [array]$IncludeVms        = @(),
-        [array]$ExcludeVms        = @(),
-        [switch]$ActiveVms        = $FALSE,
-        $WarningActiveVms         = $null,
-        $CriticalActiveVms        = $null,
-        [switch]$NoPerfData       = $FALSE,
-        [switch]$SkipVMHeartbeat  = $FALSE,
+        [array]$IncludeVms               = @(),
+        [array]$ExcludeVms               = @(),
+        [switch]$ActiveVms               = $FALSE,
+        $WarningActiveVms                = $null,
+        $CriticalActiveVms               = $null,
+        [string]$BlackoutTimesEventDelta = '-5d',
+        [switch]$NoPerfData              = $FALSE,
+        [switch]$SkipVMHeartbeat         = $FALSE,
         [ValidateSet('Unknown', 'Other', 'Enabled', 'Disabled', 'Shutting Down', 'Not Applicable', 'Enabled but Offline', 'In Test', 'Deferred', 'Quiesce', 'Starting')]
-        $VmEnabledState           = $null,
-        [switch]$NegateVMState    = $FALSE,
+        $VmEnabledState                  = $null,
+        [switch]$NegateVMState           = $FALSE,
         [ValidateSet(0, 1, 2, 3)]
-        $Verbosity                = 0
+        $Verbosity                       = 0
     );
 
     # Create a main CheckPackage, under which all following CheckPackages are added
@@ -104,6 +109,7 @@ function Invoke-IcingaCheckHyperVVMHealth()
     $HiddenCheckPackage = New-IcingaCheckPackage -Name 'Hidden PerfData' -Hidden;
     # We get all information about the virtual machine from our provider
     $VirtualComputers   = Get-IcingaVirtualComputerInfo -IncludeVms $IncludeVms -ExcludeVms $ExcludeVms -ActiveVms:$ActiveVms;
+    $HyperVProviderData = Get-IcingaProviderDataValuesHyperV;
 
     $ActiveVMCountCheck = New-IcingaCheck `
         -Name 'Active VMs' `
@@ -165,6 +171,9 @@ function Invoke-IcingaCheckHyperVVMHealth()
                 $HypervProviderEnums.VMHealthStateName.OK
             )
         );
+
+        # Add Blackout time checks for migration on case the virtual machine has entries present
+        Add-IcingaHyperVBlackoutTimeCheck -HyperVProviderData $HyperVProviderData -CheckPackage $VMCheckPackage -VMName $virtualComputer.ElementName -BlackoutTimesEventDelta $BlackoutTimesEventDelta;
 
         $CheckPackage.AddCheck($VMCheckPackage);
     }
