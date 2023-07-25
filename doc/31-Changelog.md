@@ -19,6 +19,7 @@ Released closed milestones can be found on [GitHub](https://github.com/Icinga/ic
 ### Enhancements
 
 * [#70](https://github.com/Icinga/icinga-powershell-hyperv/pull/70) Adds new plugin `Invoke-IcingaCheckHyperVDuplicateVM` to check for duplicate virtual machines on your Hyper-V node or cluster, printing critical for every single virtual machine found with duplicates
+* [#72](https://github.com/Icinga/icinga-powershell-hyperv/pull/72) Adds support to check the cluster node count for the Hyper-V environment with `Invoke-IcingaCheckHyperVHealth`
 
 #### New Plugin Integrations
 

@@ -13,6 +13,10 @@
     ### Required User Groups
 
     * Hyper-V Administrator
+.PARAMETER NodeCountWarning
+    Allows to throw warning in case the Hyper-V cluster node count is not matching this threshold
+.PARAMETER NodeCountCritical
+    Allows to throw critical in case the Hyper-V cluster node count is not matching this threshold
 .PARAMETER NoPerfData
     Disables the performance data output of this plugin
 .PARAMETER Verbosity
@@ -24,6 +28,7 @@
 .EXAMPLE
     PS> Invoke-IcingaCheckHyperVHealth -Verbosity 2
     [CRITICAL] Check package "Hyper-V Health Package" (Match All) - [CRITICAL] vmms Communication Status
+    \_ [OK] Cluster Node Count: 1
     \_ [CRITICAL] Check package "vmms Status" (Match All)
         \_ [OK] vmms Health State: OK
     \_ [OK] Check package "Services Package" (Match All)
@@ -37,8 +42,6 @@
         \_ [OK] vmicvmsession Status: Stopped
         \_ [OK] vmicvss Status: Stopped
         \_ [OK] vmms Status: Running
-    |
-    2
 .LINK
     https://github.com/Icinga/icinga-powershell-hyperv
 #>
@@ -46,6 +49,8 @@
 function Invoke-IcingaCheckHyperVHealth()
 {
     param (
+        $NodeCountWarning   = $null,
+        $NodeCountCritical  = $null,
         [switch]$NoPerfData = $FALSE,
         [ValidateSet(0, 1, 2, 3)]
         $Verbosity          = 0
@@ -54,6 +59,7 @@ function Invoke-IcingaCheckHyperVHealth()
     $CheckPackage         = New-IcingaCheckPackage -Name 'Hyper-V Health Package' -OperatorAnd -Verbose $Verbosity -AddSummaryHeader;
     $ServicesCheckPackage = New-IcingaCheckPackage -Name 'Services Package' -OperatorAnd -Verbose $Verbosity;
     $GetHypervHostDetail  = Get-IcingaHypervHostInfo;
+    $HyperVDataProvider   = Get-IcingaProviderDataValuesHyperV;
     $GetServices          = Get-IcingaServices -Service @(
         'vmcompute',
         'vmicguestinterface',
@@ -66,6 +72,16 @@ function Invoke-IcingaCheckHyperVHealth()
         'vmicvss',
         'vmms'
     );
+
+    $Check = (
+        New-IcingaCheck `
+            -Name 'Cluster Node Count' `
+            -Value $HyperVDataProvider.Metrics.ClusterData.NodeCount `
+            -MetricIndex (Get-IcingaHostname -LowerCase 1) `
+            -MetricName 'hypervnodecount'
+    ).WarnOutOfRange($NodeCountWarning).CritOutOfRange($NodeCountCritical);
+
+    $CheckPackage.AddCheck($Check);
 
     foreach ($Service in $GetServices.Keys) {
         $HypervService = $GetServices[$Service];
