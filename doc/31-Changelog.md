@@ -7,7 +7,11 @@ documentation before upgrading to a new release.
 
 Released closed milestones can be found on [GitHub](https://github.com/Icinga/icinga-powershell-hyperv/milestones?state=closed).
 
-## 1.3.0 (2023-08-01)
+## 1.4.0 (pending)
+
+[Issue and PRs](https://github.com/Icinga/icinga-powershell-hyperv/milestone/5?closed=1)
+
+## 1.3.0 (2023-11-02)
 
 [Issue and PRs](https://github.com/Icinga/icinga-powershell-hyperv/milestone/4?closed=1)
 
