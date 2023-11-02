@@ -1,4 +1,3 @@
-
 # Invoke-IcingaCheckHyperVSnapshot
 
 ## Description
@@ -97,3 +96,5 @@ icinga { Invoke-IcingaCheckHyperVSnapshot -ActiveVms -IncludeVms '*vm*' -Verbosi
 | 'icingavm_i_count'=6;; 'icingavm_i_snapshots_size_prediction'=25473978.46;; 'icingavm_i_totalsnapshot_size'=309038B;; 'icingavm_latest_snapshots_creation_delta'=1130216s;; 'icingavm_i_count'=2;; 'icingavm_i_snapshots_size_prediction'=27065675.15;; 'icingavm_i_totalsnapshot_size'=96954B;; 'icingavm_latest_snapshots_creation_delta'=9007s;;
 0    
 ```
+
+
