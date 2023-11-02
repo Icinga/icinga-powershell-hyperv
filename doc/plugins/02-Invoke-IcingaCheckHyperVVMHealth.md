@@ -36,6 +36,7 @@ To execute this plugin you will require to grant the following user permissions.
 | ActiveVms | SwitchParameter | false | False | Include only virtual machines that are currently running |
 | WarningActiveVms | Object | false |  | Allows to monitor on how many active VM's are currently present and throws a warning in case it is within the threshold |
 | CriticalActiveVms | Object | false |  | Allows to monitor on how many active VM's are currently present and throws a warning in case it is within the threshold |
+| BlackoutTimesEventDelta | String | false | -5d | Defines a time range (example "-5d") to filter for any BlackoutTime log entries older than the provided time range. In case a warning BlackoutTime is triggered and older than the provided threshold, the value is printed with an "OK" state instead of "WARNING" |
 | NoPerfData | SwitchParameter | false | False | Disables the performance data output of this plugin. |
 | SkipVMHeartbeat | SwitchParameter | false | False | Skips the current virtual machine heartbeat status check. |
 | VmEnabledState | Object | false |  | Critical threshold for the Hyper-V VM current status |
