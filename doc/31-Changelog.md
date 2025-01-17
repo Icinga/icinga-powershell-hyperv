@@ -7,7 +7,14 @@ documentation before upgrading to a new release.
 
 Released closed milestones can be found on [GitHub](https://github.com/Icinga/icinga-powershell-hyperv/milestones?state=closed).
 
-## 1.3.0 (2023-08-01)
+## 1.3.1 (2025-01-31)
+
+[Issue and PRs](https://github.com/Icinga/icinga-powershell-hyperv/milestone/6?closed=1)
+
+* [#77](https://github.com/Icinga/icinga-powershell-hyperv/issues/77) Fixes exception on Hyper-V checks in case no virtual machine is returned, found or filtered out
+* [#79](https://github.com/Icinga/icinga-powershell-hyperv/pull/79) Fixes `Get-IcingaVirtualComputerInfo` to only call `Get-IcingaClusterSharedVolumeData` once and not for each partition of a virtual machine
+
+## 1.3.0 (2023-11-02)
 
 [Issue and PRs](https://github.com/Icinga/icinga-powershell-hyperv/milestone/4?closed=1)
 
