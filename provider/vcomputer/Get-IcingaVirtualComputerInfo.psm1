@@ -502,7 +502,7 @@ function Get-IcingaVirtualComputerInfo()
     }
 
     if ($VComputerData.VMs.Count -eq 0) {
-        return;
+        return $VirtualComputers;
     }
 
     foreach ($vm in $VComputerData.VMs.Keys) {
