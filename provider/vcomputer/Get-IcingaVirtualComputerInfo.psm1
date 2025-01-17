@@ -53,6 +53,7 @@ function Get-IcingaVirtualComputerInfo()
     $VComputerRamLimit      = (Get-IcingaMemoryPerformanceCounter).'Memory Total Bytes';
     $PluginInstalled        = $FALSE;
     $CurrentVmsUsage        = 0;
+    $ClusterSharedVolume    = @{ };
     [array]$AccessDeniedVms = @();
     $VComputerData          = @{
         'VMs'       = @{ };
@@ -94,7 +95,8 @@ function Get-IcingaVirtualComputerInfo()
     }
 
     if (Test-IcingaFunction 'Get-IcingaClusterSharedVolumeData') {
-        $PluginInstalled = $TRUE;
+        $PluginInstalled     = $TRUE;
+        $ClusterSharedVolume = Get-IcingaClusterSharedVolumeData;
     }
 
     foreach ($vcomputer in $VirtualComputers) {
@@ -452,7 +454,6 @@ function Get-IcingaVirtualComputerInfo()
                         $VComputerData.Summary.Add('Located', 'ClusterStorage');
                     }
                 } else {
-                    $ClusterSharedVolume = Get-IcingaClusterSharedVolumeData;
                     foreach ($volume in $ClusterSharedVolume.Keys) {
                         $SharedVolume     = $ClusterSharedVolume[$volume];
                         [string]$VolumeId = $SharedVolume.SharedVolumeInfo.FriendlyVolumeName;
@@ -522,7 +523,6 @@ function Get-IcingaVirtualComputerInfo()
                     $VComputerData.Summary.Add('SnapshotLocated', 'ClusterStorage');
                 }
             } else {
-                $ClusterSharedVolume = Get-IcingaClusterSharedVolumeData;
                 foreach ($volume in $ClusterSharedVolume.Keys) {
                     $SharedVolume     = $ClusterSharedVolume[$volume];
                     [string]$VolumeId = $SharedVolume.SharedVolumeInfo.FriendlyVolumeName;

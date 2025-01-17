@@ -16,6 +16,7 @@ Released closed milestones can be found on [GitHub](https://github.com/Icinga/ic
 [Issue and PRs](https://github.com/Icinga/icinga-powershell-hyperv/milestone/6?closed=1)
 
 * [#77](https://github.com/Icinga/icinga-powershell-hyperv/issues/77) Fixes exception on Hyper-V checks in case no virtual machine is returned, found or filtered out
+* [#79](https://github.com/Icinga/icinga-powershell-hyperv/pull/79) Fixes `Get-IcingaVirtualComputerInfo` to only call `Get-IcingaClusterSharedVolumeData` once and not for each partition of a virtual machine
 
 ## 1.3.0 (2023-11-02)
 
