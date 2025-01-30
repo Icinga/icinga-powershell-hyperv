@@ -15,12 +15,12 @@
     )
     FunctionsToExport     = @(
         'Import-IcingaPowerShellComponentHyperV',
-        'Invoke-IcingaCheckHyperVDuplicateVM',
         'Invoke-IcingaCheckHyperVHealth',
-        'Invoke-IcingaCheckHyperVOverCommitment',
-        'Invoke-IcingaCheckHyperVSnapshot',
-        'Invoke-IcingaCheckHyperVVirtualSwitches',
+        'Invoke-IcingaCheckHyperVDuplicateVM',
         'Invoke-IcingaCheckHyperVVMHealth',
+        'Invoke-IcingaCheckHyperVSnapshot',
+        'Invoke-IcingaCheckHyperVOverCommitment',
+        'Invoke-IcingaCheckHyperVVirtualSwitches',
         'Invoke-IcingaCheckHyperVVMM'
     )
     CmdletsToExport     = @(
