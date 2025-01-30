@@ -1,5 +1,5 @@
 @{
-    ModuleVersion     = '1.3.0'
+    ModuleVersion     = '1.3.1'
     GUID              = '65edfa4d-09fc-4640-baee-037705b9d573'
     Author            = 'Yonas Habteab, Lord Hepipud'
     CompanyName       = 'Icinga GmbH'
@@ -35,7 +35,7 @@
             ProjectUri   = 'https://github.com/Icinga/icinga-powershell-hyperv'
             ReleaseNotes = 'https://github.com/Icinga/icinga-powershell-hyperv/releases'
         };
-        Version  = 'v1.3.0'
+        Version  = 'v1.3.1'
         Name     = 'Windows Hyper-V';
         Type     = 'plugins';
         Function = '';
