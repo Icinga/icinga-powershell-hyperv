@@ -34,15 +34,15 @@ To execute this plugin you will require to grant the following user permissions.
 | IncludeVms | Array | false | @() | Include only virtual machines with a specific name. Supports wildcard usage (*) |
 | ExcludeVms | Array | false | @() | Exclude virtual machines with a specific name. Supports wildcard usage (*) |
 | ActiveVms | SwitchParameter | false | False | Include only virtual machines that are currently running |
-| WarningActiveVms | Object | false |  | Allows to monitor on how many active VM's are currently present and throws a warning in case it is within the threshold |
-| CriticalActiveVms | Object | false |  | Allows to monitor on how many active VM's are currently present and throws a warning in case it is within the threshold |
-| BlackoutTimesEventDelta | String | false | -5d | Defines a time range (example "-5d") to filter for any BlackoutTime log entries older than the provided time range. In case a warning BlackoutTime is triggered and older than the provided threshold, the value is printed with an "OK" state instead of "WARNING" |
+| WarningActiveVms | Object | false |  | Allows to monitor on how many active VM's are currently present and throws a<br /> warning in case it is within the threshold |
+| CriticalActiveVms | Object | false |  | Allows to monitor on how many active VM's are currently present and throws a<br /> warning in case it is within the threshold |
+| BlackoutTimesEventDelta | String | false | -5d | Defines a time range (example "-5d") to filter for any BlackoutTime log entries older than the provided time range.<br /> In case a warning BlackoutTime is triggered and older than the provided threshold, the value is printed with an "OK" state<br /> instead of "WARNING" |
 | NoPerfData | SwitchParameter | false | False | Disables the performance data output of this plugin. |
 | SkipVMHeartbeat | SwitchParameter | false | False | Skips the current virtual machine heartbeat status check. |
 | VmEnabledState | Object | false |  | Critical threshold for the Hyper-V VM current status |
-| NegateVMState | SwitchParameter | false | False | Negates the VmEnabledState of this plugin and will then report all Vms CRITICAL, in case they are not matching the VmEnabledState. |
-| Verbosity | Object | false | 0 | Changes the behavior of the plugin output which check states are printed: 0 (default): Only service checks/packages with state not OK will be printed 1: Only services with not OK will be printed including OK checks of affected check packages including Package config 2: Everything will be printed regardless of the check state 3: Identical to Verbose 2, but prints in addition the check package configuration e.g (All must be [OK]) |
-| ThresholdInterval | String |  |  | Change the value your defined threshold checks against from the current value to a collected time threshold of the Icinga for Windows daemon, as described [here](https://icinga.com/docs/icinga-for-windows/latest/doc/service/10-Register-Service-Checks/). An example for this argument would be 1m or 15m which will use the average of 1m or 15m for monitoring. |
+| NegateVMState | SwitchParameter | false | False | Negates the VmEnabledState of this plugin and will then report all Vms<br /> CRITICAL, in case they are not matching the VmEnabledState. |
+| Verbosity | Object | false | 0 | Changes the behavior of the plugin output which check states are printed:<br /> 0 (default): Only service checks/packages with state not OK will be printed<br /> 1: Only services with not OK will be printed including OK checks of affected check packages including Package config<br /> 2: Everything will be printed regardless of the check state<br /> 3: Identical to Verbose 2, but prints in addition the check package configuration e.g (All must be [OK]) |
+| ThresholdInterval | String |  |  | Change the value your defined threshold checks against from the current value to a collected time threshold of the Icinga for Windows daemon, as described [here](https://icinga.com/docs/icinga-for-windows/latest/doc/110-Installation/06-Collect-Metrics-over-Time/). An example for this argument would be 1m or 15m which will use the average of 1m or 15m for monitoring. |
 
 ## Examples
 

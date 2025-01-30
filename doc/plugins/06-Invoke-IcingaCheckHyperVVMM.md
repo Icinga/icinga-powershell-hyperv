@@ -18,14 +18,14 @@ No special permissions required.
 | Argument | Type | Required | Default | Description |
 | ---      | ---  | ---      | ---     | ---         |
 | Hostname | String | false |  | The VMM host to check against |
-| Username | String | false |  | Allows to specify a username to run this check with specific user credentials. This is optional. |
-| Password | SecureString | false |  | The password used to authenticate the specified user for the `Username` argument. Empty passwords are not supported. |
+| Username | String | false |  | Allows to specify a username to run this check with specific user credentials.<br /> This is optional. |
+| Password | SecureString | false |  | The password used to authenticate the specified user for the `Username` argument.<br /> Empty passwords are not supported. |
 | IncludeHost | Array | false | @() | List of hosts to be included within the check output for checking |
 | ExcludeHost | Array | false | @() | List of hosts to be excluded from the check output for checking |
-| VMMState | Array | false | @() | A list of states which will return `Ok` if being present. States not inside the list will return `Critical` |
-| AvoidEmptyCheck | SwitchParameter | false | False | Overrides the default behaviour of the plugin in case no VMM host is returned by the plugin. Instead of returning `Unknown` the plugin will return `Ok` instead if this argument is set. |
-| Verbosity | Object | false | 0 | Changes the behavior of the plugin output which check states are printed: 0 (default): Only service checks/packages with state not OK will be printed 1: Only services with not OK will be printed including OK checks of affected check packages including Package config 2: Everything will be printed regardless of the check state 3: Identical to Verbose 2, but prints in addition the check package configuration e.g (All must be [OK]) |
-| ThresholdInterval | String |  |  | Change the value your defined threshold checks against from the current value to a collected time threshold of the Icinga for Windows daemon, as described [here](https://icinga.com/docs/icinga-for-windows/latest/doc/service/10-Register-Service-Checks/). An example for this argument would be 1m or 15m which will use the average of 1m or 15m for monitoring. |
+| VMMState | Array | false | @() | A list of states which will return `Ok` if being present. States not inside<br /> the list will return `Critical` |
+| AvoidEmptyCheck | SwitchParameter | false | False | Overrides the default behaviour of the plugin in case no VMM host is returned by the plugin.<br /> Instead of returning `Unknown` the plugin will return `Ok` instead if this argument is set. |
+| Verbosity | Object | false | 0 | Changes the behavior of the plugin output which check states are printed:<br /> 0 (default): Only service checks/packages with state not OK will be printed<br /> 1: Only services with not OK will be printed including OK checks of affected check packages including Package config<br /> 2: Everything will be printed regardless of the check state<br /> 3: Identical to Verbose 2, but prints in addition the check package configuration e.g (All must be [OK]) |
+| ThresholdInterval | String |  |  | Change the value your defined threshold checks against from the current value to a collected time threshold of the Icinga for Windows daemon, as described [here](https://icinga.com/docs/icinga-for-windows/latest/doc/110-Installation/06-Collect-Metrics-over-Time/). An example for this argument would be 1m or 15m which will use the average of 1m or 15m for monitoring. |
 
 ## Examples
 

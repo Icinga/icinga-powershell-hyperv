@@ -26,11 +26,11 @@ icinga> icinga { Invoke-IcingaCheckCPU -Warning 20 -Critical 40 -Core _Total -Th
 
 | Plugin Name | Description |
 | ---         | --- |
-| [Invoke-IcingaCheckHyperVDuplicateVM](plugins/07-Invoke-IcingaCheckHyperVDuplicateVM.md) | Checks the Hyper-V cluster for virtual machines with the same name |
 | [Invoke-IcingaCheckHyperVHealth](plugins/01-Invoke-IcingaCheckHyperVHealth.md) | Checks the general availability, state and health of the Hyper-V server. |
-| [Invoke-IcingaCheckHyperVOverCommitment](plugins/04-Invoke-IcingaCheckHyperVOverCommitment.md) | Calculates CPU, RAM and Storage overcommitment of a Hyper-V Server |
-| [Invoke-IcingaCheckHyperVSnapshot](plugins/05-Invoke-IcingaCheckHyperVSnapshot.md) | Monitors age, disk space, count and file size of VM snapshots. |
-| [Invoke-IcingaCheckHyperVVirtualSwitches](plugins/03-Invoke-IcingaCheckHyperVVirtualSwitches.md) | Checks the state of a Hyper-V virtual switch |
+| [Invoke-IcingaCheckHyperVDuplicateVM](plugins/07-Invoke-IcingaCheckHyperVDuplicateVM.md) | Checks the Hyper-V cluster for virtual machines with the same name |
 | [Invoke-IcingaCheckHyperVVMHealth](plugins/02-Invoke-IcingaCheckHyperVVMHealth.md) | Determines the current state of the Hyper-V virtual machine. |
+| [Invoke-IcingaCheckHyperVSnapshot](plugins/05-Invoke-IcingaCheckHyperVSnapshot.md) | Monitors age, disk space, count and file size of VM snapshots. |
+| [Invoke-IcingaCheckHyperVOverCommitment](plugins/04-Invoke-IcingaCheckHyperVOverCommitment.md) | Calculates CPU, RAM and Storage overcommitment of a Hyper-V Server |
+| [Invoke-IcingaCheckHyperVVirtualSwitches](plugins/03-Invoke-IcingaCheckHyperVVirtualSwitches.md) | Checks the state of a Hyper-V virtual switch |
 | [Invoke-IcingaCheckHyperVVMM](plugins/06-Invoke-IcingaCheckHyperVVMM.md) | Plugin for checking the Virtual Machine Manager (VMM) host to    fetch all hosts assigned to view their status from VMM view |
 
