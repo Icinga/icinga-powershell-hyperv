@@ -263,7 +263,7 @@ function Get-IcingaVirtualComputerInfo()
 
             foreach ($disk in $VComputerHardDisks.Keys) {
                 $PhysicalDisk = $VComputerHardDisks[$disk];
-                if ($PhysicalDisk.DriveReference.ContainsKey($SnapshotPart) -eq $FALSE) {
+                if ($null -eq $PhysicalDisk.DriveReference -or $PhysicalDisk.DriveReference.ContainsKey($SnapshotPart) -eq $FALSE) {
                     continue;
                 }
 
@@ -439,7 +439,7 @@ function Get-IcingaVirtualComputerInfo()
                 continue;
             }
 
-            if ($PhysicalDisk.DriveReference.ContainsKey($details.Partition) -eq $FALSE) {
+            if ($null -eq $PhysicalDisk.DriveReference -or $PhysicalDisk.DriveReference.ContainsKey($details.Partition) -eq $FALSE) {
                 continue;
             }
 

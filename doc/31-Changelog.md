@@ -7,9 +7,13 @@ documentation before upgrading to a new release.
 
 Released closed milestones can be found on [GitHub](https://github.com/Icinga/icinga-powershell-hyperv/milestones?state=closed).
 
-## 1.4.0 (pending)
+## 1.4.0 (2026-06-30)
 
 [Issue and PRs](https://github.com/Icinga/icinga-powershell-hyperv/milestone/5?closed=1)
+
+### Bugfixes
+
+* [#75](https://github.com/Icinga/icinga-powershell-hyperv/issues/75) Fixes Hyper-V plugin crash for plugins fetching disk information, while using storage spaces
 
 ## 1.3.1 (2025-01-31)
 
